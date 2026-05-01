@@ -15,8 +15,6 @@ git clone `<repo-url>`{=html} cd `<project-folder>`{=html}
 
 ### 2. สร้างไฟล์ `.env`
 
-DB_HOST=db DB_PORT=5432 DB_USER=postgres DB_PASSWORD=postgres
-DB_NAME=gymbro
 
 ------------------------------------------------------------------------
 

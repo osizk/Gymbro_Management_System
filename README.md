@@ -32,8 +32,8 @@ docker-compose down -v = Turns everything off and deletes your database memory.
 
 ## 🌐 URL
 
-Frontend: http://localhost:5173\
-Backend: http://localhost:5000\
+Frontend: http://localhost:5173
+Backend: http://localhost:5000
 Test API: http://localhost:5000/api/v1/test
 
 ------------------------------------------------------------------------
@@ -57,7 +57,7 @@ docker compose up
 
 ## 🧪 ทดสอบระบบ
 
-เข้า http://localhost:5173\
+เข้า http://localhost:5173
 ควรเห็น API Status และ Database Time
 
 ------------------------------------------------------------------------

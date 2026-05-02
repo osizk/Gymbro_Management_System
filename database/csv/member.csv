@@ -1,0 +1,31 @@
+id,member_name,gender,date_of_birth,phone,email,address,join_date,status
+1,James Carter,MALE,1995-03-12,0812345678,somchai@email.com,"12/4 Rama 9 Rd., Bangkok",2025-01-10,ACTIVE
+2,Emily Chen,FEMALE,1998-07-22,0823456789,malee@email.com,"88 Sukhumvit Rd., Bangkok.",2025-02-05,ACTIVE
+3,Ryan Mitchell,MALE,1990-11-30,0834567890,,"55/2 Ratchada Rd., Bangkok.",2024-12-01,EXPIRED
+4,Sophia Williams,FEMALE,2000-05-18,0845678901,praewa@email.com,"22 Lat Phrao Rd., Bangkok",2025-03-01,ACTIVE
+5,Liam Johnson,MALE,1993-09-04,0856789012,tae@email.com,"10/1 Phetchaburi Rd., Bangkok",2025-01-25,ACTIVE
+6,Olivia Brown,FEMALE,1997-04-15,0867890123,nipa@email.com,"33 Soi Ari, Bangkok",2025-02-20,ACTIVE
+7,Noah Davis,MALE,1988-12-08,0878901234,tanapol@email.com,"77 Sathorn Rd., Bangkok.",2024-11-15,CANCELLED
+8,Ava Martinez,FEMALE,2001-08-30,0889012345,arunee@email.com,"45/3 Phahonyothin Rd., Bangkok.",2025-03-10,ACTIVE
+9,Ethan Wilson,MALE,1992-06-22,0890123456,,"18 Nawamin Road, Bangkok",2025-01-08,ACTIVE
+10,Isabella Moore,FEMALE,1999-02-14,0801234567,parichat@email.com,"60 Ekkamai Rd., Bangkok",2025-02-28,ACTIVE
+31,Mason Taylor,MALE,1996-04-10,0811111101,piya@email.com,"14 Asoke Rd., Bangkok",2025-04-01,ACTIVE
+32,Charlotte Anderson,FEMALE,1994-08-25,0811111102,rattana@email.com,"28 Thonglor Rd., Bangkok",2025-04-05,ACTIVE
+33,Logan Thomas,MALE,1991-01-17,0811111103,,"5/3 Bangna Rd., Bangkok",2025-03-20,ACTIVE
+34,Amelia Jackson,FEMALE,1999-11-03,0811111104,supaporn@email.com,"33 Silom Road, Bangkok.",2025-05-01,ACTIVE
+35,Lucas White,MALE,1987-07-29,0811111105,kitti@email.com,"77 Soi Ekkamai, Bangkok",2025-01-15,EXPIRED
+36,Harper Harris,FEMALE,2002-03-14,0811111106,chonnipa@email.com,"9 Ladprao 71 Rd., Bangkok",2025-05-10,ACTIVE
+37,Benjamin Martin,MALE,1993-09-22,0811111107,watchara@email.com,"44 Ramkhamhaeng Rd., Bangkok.",2025-02-18,ACTIVE
+38,Evelyn Thompson,FEMALE,1998-06-07,0811111108,atchara@email.com,"18 Nawamin Road, Bangkok",2025-06-01,ACTIVE
+39,Alexander Garcia,MALE,1995-12-30,0811111109,,"62 Phetchaburi New Road, Bangkok",2025-03-08,ACTIVE
+40,Abigail Robinson,FEMALE,2001-05-19,0811111110,preeya@email.com,"11 Sukhumvit 55 Rd., Bangkok",2025-04-22,ACTIVE
+41,Henry Lewis,MALE,1989-02-28,0811111111,phumi@email.com,"30 Rama IV Rd., Bangkok",2024-10-01,CANCELLED
+42,Ella Walker,FEMALE,1997-07-11,0811111112,sirima@email.com,"55 On Nut Road, Bangkok",2025-05-15,ACTIVE
+43,Sebastian Hall,MALE,1992-10-04,0811111113,thanakorn@email.com,"21 Phaholyothin Rd., Bangkok",2025-01-30,ACTIVE
+44,Scarlett Allen,FEMALE,2000-08-16,0811111114,wipawi@email.com,"8 Soi Thonglor 10, Bangkok",2025-06-08,ACTIVE
+45,Jack Young,MALE,1986-03-21,0811111115,,"40 Charoen Krung Rd., Bangkok",2025-02-05,ACTIVE
+46,Grace King,FEMALE,1994-11-09,0811111116,kamon@email.com,"16 Sathorn North Rd., Bangkok",2025-03-25,ACTIVE
+47,Owen Wright,MALE,1990-06-18,0811111117,pitak@email.com,"7 Vibhavadi Rd., Bangkok",2024-11-20,EXPIRED
+48,Chloe Scott,FEMALE,1996-09-30,0811111118,niramon@email.com,"25 Pracha Uthit Rd., Bangkok",2025-04-14,ACTIVE
+49,William Green,MALE,2003-01-25,0811111119,suppawit@email.com,"3 Soi Ari 5, Bangkok",2025-06-15,ACTIVE
+50,Zoe Adams,FEMALE,1991-04-02,0811111120,thipwan@email.com,"50 Ratchada 18 Rd., Bangkok",2025-05-28,ACTIVE

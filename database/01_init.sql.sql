@@ -1,0 +1,259 @@
+-- GymBro Management System Database Initialization SQL Script
+
+-- Create custom ENUM types
+CREATE TYPE gender_type AS ENUM ('MALE', 'FEMALE', 'OTHER');
+CREATE TYPE member_status_type AS ENUM ('ACTIVE', 'EXPIRED', 'CANCELLED');
+CREATE TYPE booking_status_type AS ENUM ('BOOKED', 'CANCELLED', 'ATTENDED');
+CREATE TYPE equipment_status_type AS ENUM ('ACTIVE', 'UNDER_MAINTENANCE', 'RETIRED');
+CREATE TYPE ticket_status_type AS ENUM ('PENDING', 'IN_PROGRESS', 'DONE');
+CREATE TYPE product_status_type AS ENUM ('ACTIVE', 'INACTIVE', 'OUT_OF_STOCK');
+CREATE TYPE subscription_status_type AS ENUM ('ACTIVE', 'EXPIRED', 'CANCELLED');
+CREATE TYPE reference_type AS ENUM ('SUBSCRIPTION', 'TRAINING', 'CLASS', 'MERCHANDISE');
+
+-- ==============================================================
+-- Simple Form Tables
+-- ==============================================================
+
+CREATE TABLE member (
+    id VARCHAR(50) PRIMARY KEY,
+    member_name VARCHAR(255) NOT NULL,
+    gender gender_type NOT NULL,
+    date_of_birth DATE NOT NULL,
+    phone VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    address TEXT,
+    join_date DATE NOT NULL,
+    status member_status_type NOT NULL
+);
+
+CREATE TABLE trainer (
+    id VARCHAR(50) PRIMARY KEY,
+    trainer_name VARCHAR(255) NOT NULL,
+    specialization VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    commission_rate DECIMAL(5, 2) NOT NULL
+);
+
+CREATE TABLE package (
+    id VARCHAR(50) PRIMARY KEY,
+    package_name VARCHAR(255) UNIQUE NOT NULL,
+    duration_months INT NOT NULL,
+    base_price DECIMAL(10, 2) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE training_type (
+    id VARCHAR(50) PRIMARY KEY,
+    type_name VARCHAR(255) UNIQUE NOT NULL,
+    default_hourly_rate DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE class (
+    id VARCHAR(50) PRIMARY KEY,
+    class_name VARCHAR(255) UNIQUE NOT NULL,
+    schedule_day VARCHAR(100) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    max_capacity INT NOT NULL,
+    class_price DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE class_booking (
+    id VARCHAR(50) PRIMARY KEY,
+    class_id VARCHAR(50) NOT NULL REFERENCES class(id) ON DELETE CASCADE,
+    member_id VARCHAR(50) NOT NULL REFERENCES member(id) ON DELETE CASCADE,
+    booking_date DATE NOT NULL,
+    status booking_status_type NOT NULL,
+    check_in_time TIME
+);
+
+CREATE TABLE equipment_category (
+    id VARCHAR(50) PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE equipment (
+    id VARCHAR(50) PRIMARY KEY,
+    equipment_name VARCHAR(255) NOT NULL,
+    category_id VARCHAR(50) NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT,
+    purchase_date DATE NOT NULL,
+    status equipment_status_type NOT NULL
+);
+
+CREATE TABLE staff (
+    id VARCHAR(50) PRIMARY KEY,
+    staff_name VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE maintenance_ticket (
+    id VARCHAR(50) PRIMARY KEY,
+    equipment_id VARCHAR(50) NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    report_date DATE NOT NULL,
+    issue_description TEXT NOT NULL,
+    technician_id VARCHAR(50) NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
+    status ticket_status_type NOT NULL,
+    repair_cost DECIMAL(10, 2)
+);
+
+CREATE TABLE expense_category (
+    id VARCHAR(50) PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE payment_method (
+    id VARCHAR(50) PRIMARY KEY,
+    method_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE product_category (
+    id VARCHAR(50) PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE product (
+    id VARCHAR(50) PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    category_id VARCHAR(50) NOT NULL REFERENCES product_category(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    cost_price DECIMAL(10, 2) NOT NULL,
+    selling_price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT NOT NULL,
+    status product_status_type NOT NULL
+);
+
+-- ==============================================================
+-- Line-Item Form Tables (Header + Lines)
+-- ==============================================================
+
+-- 1. Subscription
+CREATE TABLE subscription (
+    id VARCHAR(50) PRIMARY KEY,
+    subscription_date DATE NOT NULL,
+    member_id VARCHAR(50) NOT NULL REFERENCES member(id) ON DELETE CASCADE,
+    status subscription_status_type NOT NULL,
+    total_amount DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE subscription_line_item (
+    id SERIAL PRIMARY KEY,
+    subscription_id VARCHAR(50) NOT NULL REFERENCES subscription(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    package_id VARCHAR(50) NOT NULL REFERENCES package(id) ON DELETE RESTRICT,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    base_price DECIMAL(10, 2) NOT NULL,
+    discount_pct DECIMAL(5, 2) DEFAULT 0.00,
+    extended_price DECIMAL(10, 2) NOT NULL
+);
+
+-- 2. Training Booking
+CREATE TABLE training_booking (
+    id VARCHAR(50) PRIMARY KEY,
+    booking_date DATE NOT NULL,
+    member_id VARCHAR(50) NOT NULL REFERENCES member(id) ON DELETE CASCADE,
+    trainer_id VARCHAR(50) NOT NULL REFERENCES trainer(id) ON DELETE RESTRICT,
+    total_session_cost DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE training_session (
+    id SERIAL PRIMARY KEY,
+    booking_id VARCHAR(50) NOT NULL REFERENCES training_booking(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    type_id VARCHAR(50) NOT NULL REFERENCES training_type(id) ON DELETE RESTRICT,
+    session_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    duration_minutes INT,
+    hourly_rate DECIMAL(10, 2) NOT NULL,
+    session_cost DECIMAL(10, 2) NOT NULL,
+    notes VARCHAR(255)
+);
+
+-- 3. Payment Receipt
+CREATE TABLE payment_receipt (
+    id VARCHAR(50) PRIMARY KEY,
+    receipt_date DATE NOT NULL,
+    member_id VARCHAR(50) NOT NULL REFERENCES member(id) ON DELETE CASCADE,
+    method_id VARCHAR(50) NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT,
+    payment_reference_no VARCHAR(100),
+    total_paid DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE receipt_line_item (
+    id SERIAL PRIMARY KEY,
+    receipt_id VARCHAR(50) NOT NULL REFERENCES payment_receipt(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    reference_type reference_type NOT NULL,
+    reference_no VARCHAR(100) NOT NULL,
+    amount_paid DECIMAL(10, 2) NOT NULL,
+    remaining_balance DECIMAL(10, 2),
+    notes VARCHAR(255)
+);
+
+-- 4. Operational Expense Voucher
+CREATE TABLE expense_voucher (
+    id VARCHAR(50) PRIMARY KEY,
+    voucher_date DATE NOT NULL,
+    vendor_name VARCHAR(255) NOT NULL,
+    paid_by_staff_id VARCHAR(50) NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
+    method_id VARCHAR(50) NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT,
+    total_expense DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE expense_line_item (
+    id SERIAL PRIMARY KEY,
+    voucher_id VARCHAR(50) NOT NULL REFERENCES expense_voucher(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    category_id VARCHAR(50) NOT NULL REFERENCES expense_category(id) ON DELETE RESTRICT,
+    amount DECIMAL(10, 2) NOT NULL,
+    description VARCHAR(255) NOT NULL
+);
+
+-- 5. Merchandise Sales Invoice
+CREATE TABLE merchandise_invoice (
+    id VARCHAR(50) PRIMARY KEY,
+    invoice_date DATE NOT NULL,
+    member_id VARCHAR(50) REFERENCES member(id) ON DELETE SET NULL,
+    total_amount DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE merchandise_line_item (
+    id SERIAL PRIMARY KEY,
+    invoice_id VARCHAR(50) NOT NULL REFERENCES merchandise_invoice(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    product_id VARCHAR(50) NOT NULL REFERENCES product(id) ON DELETE RESTRICT,
+    quantity DECIMAL(10, 2) NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    discount_pct DECIMAL(5, 2) DEFAULT 0.00,
+    extended_price DECIMAL(10, 2) NOT NULL
+);
+
+-- 6. Equipment Purchase
+CREATE TABLE equipment_purchase (
+    id VARCHAR(50) PRIMARY KEY,
+    purchase_date DATE NOT NULL,
+    supplier_name VARCHAR(255) NOT NULL,
+    received_by_staff_id VARCHAR(50) NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
+    method_id VARCHAR(50) NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT,
+    total_purchase_cost DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE equipment_purchase_item (
+    id SERIAL PRIMARY KEY,
+    purchase_id VARCHAR(50) NOT NULL REFERENCES equipment_purchase(id) ON DELETE CASCADE,
+    line_no INT NOT NULL,
+    equipment_name VARCHAR(255) NOT NULL,
+    category_id VARCHAR(50) NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT,
+    quantity INT NOT NULL,
+    unit_cost DECIMAL(10, 2) NOT NULL,
+    warranty_months INT DEFAULT 0,
+    extended_cost DECIMAL(10, 2) NOT NULL
+);

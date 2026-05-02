@@ -20,7 +20,13 @@ git clone `<repo-url>`{=html} cd `<project-folder>`{=html}
 
 ### 3. รัน Docker
 
-docker compose down -v docker compose up --build
+docker-compose up = Starts everything (locks up your terminal).
+
+docker-compose up -d = Starts everything in the background (frees your terminal).
+
+docker-compose down = Turns everything off (saves your data).
+
+docker-compose down -v = Turns everything off and deletes your database memory.
 
 ------------------------------------------------------------------------
 

@@ -1,0 +1,31 @@
+id,product_name,category_id,cost_price,selling_price,stock_quantity,status
+1,Whey Protein Chocolate 1kg,1,850.00,1290.00,24,ACTIVE
+2,Whey Protein Vanilla 1kg,1,850.00,1290.00,18,ACTIVE
+3,BCAAs Tropical 300g,1,420.00,680.00,15,ACTIVE
+4,Creatine Monohydrate 300g,1,350.00,590.00,8,ACTIVE
+5,GymBro Tank Top (M),2,120.00,290.00,30,ACTIVE
+6,GymBro Tank Top (L),2,120.00,290.00,25,ACTIVE
+7,Compression Shorts,2,180.00,390.00,20,ACTIVE
+8,Resistance Band Set,3,180.00,390.00,0,OUT_OF_STOCK
+9,Lifting Gloves,3,150.00,320.00,12,ACTIVE
+10,Shaker Bottle 700ml,3,60.00,150.00,40,ACTIVE
+11,Foam Roller,3,200.00,450.00,6,ACTIVE
+12,Sports Water Bottle 1L,3,80.00,180.00,22,ACTIVE
+13,Protein Bar (Box 12),5,280.00,490.00,10,ACTIVE
+14,Electrolyte Drink 500ml,5,25.00,55.00,60,ACTIVE
+15,Whey RTD 330ml,5,40.00,90.00,45,ACTIVE
+16,Whey Isolate Strawberry 1kg,1,1050.00,1590.00,12,ACTIVE
+17,Mass Gainer Chocolate 3kg,1,950.00,1490.00,8,ACTIVE
+18,Pre-Workout Berry 300g,1,390.00,690.00,10,ACTIVE
+19,Omega-3 Fish Oil 90 caps,1,180.00,320.00,20,ACTIVE
+20,Multivitamin 60 tabs,1,120.00,220.00,25,ACTIVE
+21,GymBro Shorts (M),2,150.00,320.00,18,ACTIVE
+22,GymBro Hoodie (L),2,380.00,790.00,6,ACTIVE
+23,GymBro Cap,2,80.00,190.00,22,ACTIVE
+24,Gym Bag 30L,3,350.00,690.00,9,ACTIVE
+25,Jump Rope Speed,3,90.00,210.00,15,ACTIVE
+26,Wrist Wrap Support,3,75.00,180.00,20,ACTIVE
+27,Knee Sleeve (pair),3,140.00,290.00,12,ACTIVE
+28,Isotonic Drink 500ml,5,22.00,50.00,80,ACTIVE
+29,Coffee Protein Shake 330ml,5,45.00,95.00,36,ACTIVE
+30,Energy Gel Pack (x10),5,85.00,180.00,28,ACTIVE

@@ -23,4 +23,9 @@ FROM '/docker-entrypoint-initdb.d/csv/merchandise_invoice.csv'
 DELIMITER ',' 
 CSV HEADER;
 
+COPY merchandise_line_item
+FROM '/docker-entrypoint-initdb.d/csv/merchandise_line_item.csv' 
+DELIMITER ',' 
+CSV HEADER;
+
 -- (Add more COPY commands here for any other CSV files you have)

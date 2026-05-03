@@ -1,0 +1,16 @@
+id,package_name,duration_months,base_price,description
+1,Monthly Basic,1,990.00,1-month access to all gym locations.
+2,Quarterly Plus,3,2700.00,"3-month package, save 9%."
+3,Semi-Annual,6,4800.00,"6-month package, save 19%."
+4,Annual Premium,12,8900.00,1-Year Package: Save 25% + Exclusive Benefits
+5,Student Monthly,1,690.00,For students (student ID required).
+6,Family Monthly,1,2500.00,Monthly package for family (up to 4 members)
+7,Weekend Only,1,699.00,Access only on weekends
+8,Day Pass Pack,1,499.00,10 day pass bundle
+9,Platinum Annual,12,9999.00,All-inclusive annual membership with personal training
+10,Couple Monthly,1,1800.00,Register for 2 people and get a special price per month.
+11,Student Quarterly,3,1800.00,Register for 2 people and get a special price per month.
+12,VIP Annual,12,14900.00,"VIP membership for 1 year, including 4 personal training sessions."
+13,Corporate Monthly,1,3500.00,Organizational package for ≥5 people.
+14,Senior Monthly,1,799.00,Discounted monthly for seniors 55+
+15,Trial Week,1,299.00,7-day trial membership for new members

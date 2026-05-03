@@ -1,0 +1,29 @@
+id,voucher_id,line_no,category_id,amount,description
+1,EXP-2026-000001,1,1,8500.00,"Electricity bill, January 2026"
+2,EXP-2026-000002,1,2,2000.00,Clean the air conditioning system (4 units).
+3,EXP-2026-000002,2,4,1200.00,Cleaning solution + garbage bags
+4,EXP-2026-000003,1,1,9200.00,"Electricity bill, February 2026"
+5,EXP-2026-000004,1,2,3500.00,Repair Cable Crossover Machine
+6,EXP-2026-000004,2,2,1800.00,Replace the bearings in the dumbbell rack.
+7,EXP-2026-000005,1,3,5000.00,Shopfront advertising sign
+8,EXP-2026-000005,2,3,2500.00,Promotional leaflets/brochures
+9,EXP-2026-000006,1,1,8800.00,"Electricity bill, March 2026"
+10,EXP-2026-000007,1,4,1500.00,A4 paper + printer ink
+11,EXP-2026-000007,2,4,800.00,Files + Office Supplies
+12,EXP-2026-000008,1,4,3500.00,Boxing gloves and punching bag
+13,EXP-2026-000008,2,4,1200.00,5 yoga mats
+14,EXP-2026-000009,1,1,1290.00,Internet Business (January)
+15,EXP-2026-000010,1,2,4500.00,Clean glass floors / Clean glass surfaces (floors)
+16,EXP-2026-000010,2,4,800.00,Disinfectant + microfiber cloth
+17,EXP-2026-000011,1,5,6500.00,Employee Appreciation Dinner Q1
+18,EXP-2026-000012,1,4,950.00,Shipping cost from Supplier
+19,EXP-2026-000013,1,1,9400.00,"Electricity bill, February 2026"
+20,EXP-2026-000014,1,2,5200.00,TRX repair + Hack Squat cable replacement
+21,EXP-2026-000015,1,1,1290.00,"Internet Business, February"
+22,EXP-2026-000016,1,4,650.00,A4 paper + pen
+23,EXP-2026-000016,2,4,450.00,20 document folders
+24,EXP-2026-000017,1,2,3800.00,Monthly deep cleaning
+25,EXP-2026-000018,1,3,8000.00,Run Facebook/Instagram ads.
+26,EXP-2026-000018,2,3,2000.00,Content Creator (Photography)
+27,EXP-2026-000019,1,4,1500.00,Flowers decorate the storefront
+28,EXP-2026-000020,1,1,8600.00,Electricity bill for March 2026 (new bill)

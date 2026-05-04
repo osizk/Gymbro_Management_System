@@ -1,2 +1,16 @@
 # Environment variables
 server/.env
+.env
+
+# Dependencies
+node_modules/
+
+# Mac system files
+.DS_Store
+
+# Build/output folders
+dist/
+build/
+
+# Logs
+*.log

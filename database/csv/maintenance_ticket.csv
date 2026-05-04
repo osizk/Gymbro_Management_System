@@ -1,0 +1,16 @@
+id,equipment_id,report_date,issue_description,technician_id,status,repair_cost
+MNT-2025-001,4,2025-12-10,High-speed belt slippage.,1,DONE,4500.00
+MNT-2026-001,8,2026-01-05,The cable is broken; the wire rope needs to be replaced.,1,IN_PROGRESS,
+MNT-2026-002,9,2026-01-18,The 30kg dumbbell locking plate is completely broken.,5,IN_PROGRESS,
+MNT-2026-003,2,2026-02-20,The motor is making noise; it needs lubrication.,1,DONE,800.00
+MNT-2026-004,7,2026-03-01,The weight remains in place and does not return to its original position.,5,PENDING,
+MNT-2026-005,15,2026-01-28,The belt is slipping slightly; the bolts need to be tightened.,1,DONE,500.00
+MNT-2026-006,19,2026-02-03,The seat is damaged and the cover needs replacing.,11,DONE,900.00
+MNT-2026-007,21,2026-02-08,The counterweight requires adjusting the track.,11,PENDING,
+MNT-2026-008,27,2026-02-14,One TRX cable is broken.,1,IN_PROGRESS,
+MNT-2026-009,17,2026-02-25,The pedal is loose; the screw needs tightening.,1,DONE,200.00
+MNT-2026-010,22,2026-03-01,The handle is worn out and needs to be re-wrapped.,11,PENDING,
+MNT-2026-011,5,2026-03-05,Worn-out ball bearings are making noise.,1,IN_PROGRESS,
+MNT-2026-012,11,2026-03-08,Some items are underweight; we need to order more.,11,PENDING,
+MNT-2026-013,20,2026-03-12,The display screen is not turning on.,1,DONE,1200.00
+MNT-2026-014,16,2026-03-18,The power cord is damaged and needs replacing.,11,IN_PROGRESS,

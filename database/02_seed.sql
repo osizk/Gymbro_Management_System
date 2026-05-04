@@ -75,8 +75,36 @@ COPY class
 FROM '/docker-entrypoint-initdb.d/csv/class.csv'
 DELIMITER ',' CSV HEADER;
 
-
 COPY class_booking
 FROM '/docker-entrypoint-initdb.d/csv/class_booking.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY equipment_category
+FROM '/docker-entrypoint-initdb.d/csv/equipment_category.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY equipment
+FROM '/docker-entrypoint-initdb.d/csv/equipment.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY maintenance_ticket
+FROM '/docker-entrypoint-initdb.d/csv/maintenance_ticket.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY equipment_purchase
+FROM '/docker-entrypoint-initdb.d/csv/equipment_purchase.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY equipment_purchase_item
+FROM '/docker-entrypoint-initdb.d/csv/equipment_purchase_item.csv'
+DELIMITER ',' CSV HEADER;
+
+
+COPY payment_receipt
+FROM '/docker-entrypoint-initdb.d/csv/payment_receipt.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY receipt_line_item
+FROM '/docker-entrypoint-initdb.d/csv/receipt_line_item.csv'
 DELIMITER ',' CSV HEADER;
 -- (Add more COPY commands here for any other CSV files you have)

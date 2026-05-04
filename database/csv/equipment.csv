@@ -1,0 +1,31 @@
+id,equipment_name,category_id,purchase_date,status
+1,Treadmill Life Fitness T3,1,2024-06-15,ACTIVE
+2,Treadmill Life Fitness T3-2,1,2024-06-15,ACTIVE
+3,Elliptical Trainer EX-500,1,2024-07-01,ACTIVE
+4,Rowing Machine Concept2,1,2023-12-10,ACTIVE
+5,Smith Machine Pro,2,2024-06-15,ACTIVE
+6,Lat Pulldown Machine,2,2024-06-15,ACTIVE
+7,Leg Press Machine LP-200,2,2024-07-20,ACTIVE
+8,Cable Crossover Machine,2,2024-08-01,UNDER_MAINTENANCE
+9,Dumbbell Set 5–50kg,3,2024-07-01,UNDER_MAINTENANCE
+10,Barbell Set Olympic,3,2024-06-15,ACTIVE
+11,EZ Curl Bar Set,3,2024-09-01,ACTIVE
+12,Yoga Mat Premium (x20),4,2025-01-05,ACTIVE
+13,Stretching Area Mats,4,2025-01-05,ACTIVE
+14,Foam Roller Station,5,2025-02-10,ACTIVE
+15,Treadmill Life Fitness T3-3,1,2024-09-01,ACTIVE
+16,Stationary Bike SB-700,1,2024-09-01,ACTIVE
+17,Stair Climber SC-300,1,2024-10-15,ACTIVE
+18,Air Bike Assault,1,2025-01-10,ACTIVE
+19,Chest Press Machine CP-100,2,2024-09-01,ACTIVE
+20,Seated Row Machine SR-200,2,2024-09-01,ACTIVE
+21,Shoulder Press Machine,2,2024-10-01,ACTIVE
+22,Hack Squat Machine,2,2024-11-01,ACTIVE
+23,Preacher Curl Machine,2,2025-01-05,ACTIVE
+24,Kettlebell Set 8-32kg,3,2024-08-20,ACTIVE
+25,Medicine Ball Set 3-10kg,3,2024-08-20,ACTIVE
+26,Pull-Up Bar Station,2,2024-07-15,ACTIVE
+27,TRX Suspension Trainer x5,4,2024-09-15,ACTIVE
+28,Balance Board Set,4,2025-02-01,ACTIVE
+29,Massage Gun Pro,5,2025-01-20,ACTIVE
+30,Ice Bath Tub,5,2025-03-01,RETIRED

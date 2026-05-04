@@ -76,7 +76,7 @@ CREATE TABLE equipment_category (
 CREATE TABLE equipment (
     id VARCHAR(50) PRIMARY KEY,
     equipment_name VARCHAR(255) NOT NULL,
-    category_id VARCHAR(50) NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT,
+    category_id VARCHAR(50) NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT ON UPDATE CASCADE ,
     purchase_date DATE NOT NULL,
     status equipment_status_type NOT NULL
 );
@@ -90,10 +90,10 @@ CREATE TABLE staff (
 
 CREATE TABLE maintenance_ticket (
     id                VARCHAR(50)        PRIMARY KEY,
-    equipment_id      VARCHAR(50)        NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    equipment_id      VARCHAR(50)        NOT NULL REFERENCES equipment(id) ON DELETE CASCADE ON UPDATE CASCADE,
     report_date       DATE               NOT NULL,
     issue_description TEXT               NOT NULL,
-    technician_id     INT                NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
+    technician_id     INT                NOT NULL REFERENCES staff(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     status            ticket_status_type NOT NULL,
     repair_cost       DECIMAL(10,2)
 );
@@ -181,16 +181,16 @@ CREATE TABLE training_session (
 CREATE TABLE payment_receipt (
     id                   VARCHAR(50)   PRIMARY KEY,
     receipt_date         DATE          NOT NULL,
-    member_id            BIGINT        NOT NULL REFERENCES member(id) ON DELETE CASCADE,
-    method_id  INT  NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT,
+    member_id            BIGINT        NOT NULL REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    method_id  INT  NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     payment_reference_no VARCHAR(100),
     total_paid           DECIMAL(10,2) DEFAULT 0.00,
     created_at           TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE receipt_line_item (
-    id                SERIAL        PRIMARY KEY,
-    receipt_id        VARCHAR(50)   NOT NULL REFERENCES payment_receipt(id) ON DELETE CASCADE,
+    id                INT        PRIMARY KEY,
+    receipt_id        VARCHAR(50)   NOT NULL REFERENCES payment_receipt(id) ON DELETE CASCADE ON UPDATE CASCADE,
     line_no           INT           NOT NULL,
     reference_type    reference_type NOT NULL,
     reference_no      VARCHAR(100)  NOT NULL,
@@ -249,18 +249,18 @@ CREATE TABLE equipment_purchase (
     id                   VARCHAR(50)   PRIMARY KEY,
     purchase_date        DATE          NOT NULL,
     supplier_name        VARCHAR(255)  NOT NULL,
-    received_by_staff_id INT           NOT NULL REFERENCES staff(id) ON DELETE RESTRICT,
-    method_id            INT           NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT,
+    received_by_staff_id INT           NOT NULL REFERENCES staff(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    method_id            INT           NOT NULL REFERENCES payment_method(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     total_purchase_cost  DECIMAL(10,2) DEFAULT 0.00,
     created_at           TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE equipment_purchase_item (
-    id              SERIAL        PRIMARY KEY,
-    purchase_id     VARCHAR(50)   NOT NULL REFERENCES equipment_purchase(id) ON DELETE CASCADE,
+    id              INT        PRIMARY KEY,
+    purchase_id     VARCHAR(50)   NOT NULL REFERENCES equipment_purchase(id) ON DELETE CASCADE ON UPDATE CASCADE,
     line_no         INT           NOT NULL,
     equipment_name  VARCHAR(255)  NOT NULL,
-    category_id     VARCHAR(50)   NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT,
+    category_id     VARCHAR(50)   NOT NULL REFERENCES equipment_category(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     quantity        INT           NOT NULL,
     unit_cost       DECIMAL(10,2) NOT NULL,
     warranty_months INT           DEFAULT 0,

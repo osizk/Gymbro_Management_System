@@ -55,4 +55,28 @@ COPY subscription_line_item
 FROM '/docker-entrypoint-initdb.d/csv/subscription_line_item.csv'
 DELIMITER ',' CSV HEADER;
 
+COPY training_type
+FROM '/docker-entrypoint-initdb.d/csv/training_type.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY trainer
+FROM '/docker-entrypoint-initdb.d/csv/trainer.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY training_booking
+FROM '/docker-entrypoint-initdb.d/csv/training_booking.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY training_session
+FROM '/docker-entrypoint-initdb.d/csv/training_session.csv'
+DELIMITER ',' CSV HEADER;
+
+COPY class
+FROM '/docker-entrypoint-initdb.d/csv/class.csv'
+DELIMITER ',' CSV HEADER;
+
+
+COPY class_booking
+FROM '/docker-entrypoint-initdb.d/csv/class_booking.csv'
+DELIMITER ',' CSV HEADER;
 -- (Add more COPY commands here for any other CSV files you have)

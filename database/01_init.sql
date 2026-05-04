@@ -61,8 +61,8 @@ CREATE TABLE class (
 
 CREATE TABLE class_booking (
     id VARCHAR(50) PRIMARY KEY,
-    class_id VARCHAR(50) NOT NULL REFERENCES class(id) ON DELETE CASCADE,
-    member_id BIGINT NOT NULL REFERENCES member(id) ON DELETE CASCADE,
+    class_id VARCHAR(50) NOT NULL REFERENCES class(id) ON DELETE RESTRICT ON UPDATE CASCADE ,
+    member_id BIGINT NOT NULL REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
     booking_date DATE NOT NULL,
     status booking_status_type NOT NULL,
     check_in_time TIME
@@ -157,17 +157,17 @@ CREATE TABLE subscription_line_item (
 CREATE TABLE training_booking (
     id                 VARCHAR(50)   PRIMARY KEY,
     booking_date       DATE          NOT NULL,
-    member_id          BIGINT        NOT NULL REFERENCES member(id) ON DELETE CASCADE,
-    trainer_id         VARCHAR(50)   NOT NULL REFERENCES trainer(id) ON DELETE RESTRICT,
+    member_id          BIGINT        NOT NULL REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    trainer_id         VARCHAR(50)   NOT NULL REFERENCES trainer(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     total_session_cost DECIMAL(10,2) DEFAULT 0.00,
     created_at         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE training_session (
     id               SERIAL        PRIMARY KEY,
-    booking_id       VARCHAR(50)   NOT NULL REFERENCES training_booking(id) ON DELETE CASCADE,
+    booking_id       VARCHAR(50)   NOT NULL REFERENCES training_booking(id) ON DELETE CASCADE ON UPDATE CASCADE,
     line_no          INT           NOT NULL,
-    type_id          VARCHAR(50)   NOT NULL REFERENCES training_type(id) ON DELETE RESTRICT,
+    type_id          VARCHAR(50)   NOT NULL REFERENCES training_type(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     session_date     DATE          NOT NULL,
     start_time       TIME          NOT NULL,
     end_time         TIME          NOT NULL,

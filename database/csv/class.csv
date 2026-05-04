@@ -1,0 +1,16 @@
+id,class_name,schedule_day,start_time,end_time,max_capacity,class_price
+1,Morning Yoga,"MON,WED,FRI",07:00:00,08:00:00,20,150.00
+2,HIIT Blast,"TUE,THU",18:00:00,19:00:00,15,200.00
+3,Zumba Party,SAT,10:00:00,11:00:00,25,180.00
+4,Muay Thai Group,"MON,WED",19:00:00,20:30:00,12,250.00
+5,Pilates Core,"TUE,FRI",09:00:00,10:00:00,15,170.00
+6,Spin Cycling,"MON,THU,SAT",06:30:00,07:30:00,20,160.00
+7,Boxing Fundamentals,"TUE,FRI",19:00:00,20:00:00,10,220.00
+8,Senior Yoga,"MON,WED,FRI",08:30:00,09:30:00,15,130.00
+9,CrossFit WOD,"MON,WED,FRI",06:00:00,07:00:00,12,230.00
+10,Dance Aerobics,"TUE,THU,SAT",17:00:00,18:00:00,20,160.00
+11,Stretch & Recovery,"WED,SAT",11:00:00,12:00:00,18,120.00
+12,Power Lifting Club,"MON,THU",20:00:00,21:30:00,8,280.00
+13,Core Strength,WED,07:00:00,08:00:00,20,180.00
+14,TRX Suspension,FRI,18:00:00,19:00:00,15,220.00
+15,Functional Flow,SAT,09:00:00,10:00:00,20,200.00

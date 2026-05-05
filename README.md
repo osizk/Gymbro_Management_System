@@ -20,7 +20,7 @@ git clone `<repo-url>`{=html} cd `<project-folder>`{=html}
 
 ### 3. รัน Docker
 docker-compose --build
-(ถ้า error ลบ nodemon ออกจาก server, client)
+(ถ้า error ลบ folder node_modules ออกจาก server, client)
 
 คำสั่งเพิ่มเติม
 docker-compose up = Starts everything (locks up your terminal).

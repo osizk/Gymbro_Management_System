@@ -155,7 +155,16 @@ export default function MerchandiseList() {
                   ) : (
                     paginated.map((inv) => (
                       <tr key={inv.id}>
-                        <td><span className="badge badge-green">{inv.id}</span></td>
+                        <td>
+                          <span
+                            className="badge badge-green"
+                            style={{ cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3 }}
+                            onClick={() => navigate(`/merchandise/${inv.id}`)}
+                            title="View invoice"
+                          >
+                            {inv.id}
+                          </span>
+                        </td>
                         <td>{fmtDate(inv.invoice_date)}</td>
                         <td>
                           {inv.member_name ? (

@@ -6,6 +6,9 @@ const ctrl = require('../controllers/merchandiseInvoiceController');
 // GET /api/merchandise/products/active
 router.get('/products/active', ctrl.getActiveProducts);
 
+// GET /api/merchandise/members/active
+router.get('/members/active', ctrl.getActiveMembers);
+
 // GET /api/merchandise/members/:id
 router.get('/members/:id', ctrl.getMemberById);
 

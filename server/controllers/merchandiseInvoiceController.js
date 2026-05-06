@@ -106,6 +106,16 @@ async function getMemberById(req, res) {
   }
 }
 
+async function getActiveMembers(req, res) {
+  try {
+    const data = await service.getActiveMembers();
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error('[getActiveMembers]', err.message);
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
 module.exports = {
   getAllInvoices,
   getInvoiceById,
@@ -114,4 +124,5 @@ module.exports = {
   deleteInvoice,
   getActiveProducts,
   getMemberById,
+  getActiveMembers,
 };

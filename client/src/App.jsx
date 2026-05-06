@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import MerchandiseList from './pages/Merchandise/MerchandiseList';
-import MerchandiseForm from './pages/Merchandise/MerchandiseForm';
+import Sidebar            from './components/Sidebar';
+import MerchandiseList    from './pages/Merchandise/MerchandiseList';
+import MerchandiseForm    from './pages/Merchandise/MerchandiseForm';
+import MerchandiseView    from './pages/Merchandise/MerchandiseView';
 
 function Layout({ children }) {
   return (
@@ -19,12 +20,16 @@ export default function App() {
         <Route path="/" element={<Navigate to="/merchandise" replace />} />
 
         {/* ── Merchandise Module ── */}
-        <Route path="/merchandise"          element={<Layout><MerchandiseList /></Layout>} />
-        <Route path="/merchandise/new"      element={<Layout><MerchandiseForm /></Layout>} />
-        <Route path="/merchandise/:id/edit" element={<Layout><MerchandiseForm /></Layout>} />
+        <Route path="/merchandise"              element={<Layout><MerchandiseList /></Layout>} />
+        <Route path="/merchandise/new"          element={<Layout><MerchandiseForm /></Layout>} />
+        <Route path="/merchandise/:id"          element={<Layout><MerchandiseView /></Layout>} />
+        <Route path="/merchandise/:id/edit"     element={<Layout><MerchandiseForm /></Layout>} />
 
         {/* teammates add routes here */}
-        {/* <Route path="/subscriptions" element={<Layout><SubscriptionList /></Layout>} /> */}
+        {/* <Route path="/subscriptions"            element={<Layout><SubscriptionList /></Layout>} /> */}
+        {/* <Route path="/subscriptions/new"        element={<Layout><SubscriptionForm /></Layout>} /> */}
+        {/* <Route path="/subscriptions/:id"        element={<Layout><SubscriptionView /></Layout>} /> */}
+        {/* <Route path="/subscriptions/:id/edit"   element={<Layout><SubscriptionForm /></Layout>} /> */}
 
         <Route path="*" element={<Layout><p className="state-box">404 — Page not found</p></Layout>} />
       </Routes>

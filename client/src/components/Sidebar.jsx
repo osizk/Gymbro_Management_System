@@ -5,7 +5,7 @@ const NAV = [
     section: 'Line-Item Forms',
     links: [
       { to: '/merchandise', label: 'Merchandise Sales' },
-      // teammates add their links here, e.g.:
+      // teammates add their links here:
       // { to: '/subscriptions',     label: 'Subscriptions' },
       // { to: '/training-bookings', label: 'Training Bookings' },
       // { to: '/payment-receipts',  label: 'Payment Receipts' },
@@ -19,8 +19,13 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <h1>GymBro</h1>
-        <span>Management System</span>
+        <div className="sidebar-logo-row">
+          <img src="/logo.png" alt="GymBro logo" className="sidebar-logo-img" />
+          <div className="sidebar-logo-text">
+            <h1>GymBro</h1>
+            <span>Management System</span>
+          </div>
+        </div>
       </div>
 
       {NAV.map((group) => (
@@ -30,9 +35,7 @@ export default function Sidebar() {
             <NavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) =>
-                'sidebar-link' + (isActive ? ' active' : '')
-              }
+              className={({ isActive }) => 'sidebar-link' + (isActive ? ' active' : '')}
               end
             >
               {link.label}

@@ -164,9 +164,13 @@ export default function MerchandiseForm() {
           discount_pct: parseFloat(l.discount_pct) || 0,
         })),
       };
-      if (isEdit) await updateInvoice(id, payload);
-      else        await createInvoice(payload);
-      navigate('/merchandise');
+      if (isEdit) {
+        await updateInvoice(id, payload);
+        navigate(`/merchandise/${id}`);
+      } else {
+        const res = await createInvoice(payload);
+        navigate(`/merchandise/${res.data.id}`);
+      }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to save invoice');
     } finally {

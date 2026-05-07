@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar            from './components/Sidebar';
-import MerchandiseList    from './pages/Merchandise/MerchandiseList';
-import MerchandiseForm    from './pages/Merchandise/MerchandiseForm';
-import MerchandiseView    from './pages/Merchandise/MerchandiseView';
+import Sidebar             from './components/Sidebar';
+import MerchandiseList     from './pages/Merchandise/MerchandiseList';
+import MerchandiseForm     from './pages/Merchandise/MerchandiseForm';
+import MerchandiseView     from './pages/Merchandise/MerchandiseView';
+import SubscriptionList    from './pages/Subscription/SubscriptionList';
+import SubscriptionForm    from './pages/Subscription/SubscriptionForm';
+import SubscriptionView    from './pages/Subscription/SubscriptionView';
 
 function Layout({ children }) {
   return (
@@ -19,17 +22,23 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/merchandise" replace />} />
 
-        {/* ── Merchandise Module ── */}
+        {/* ── Merchandise ── */}
         <Route path="/merchandise"              element={<Layout><MerchandiseList /></Layout>} />
         <Route path="/merchandise/new"          element={<Layout><MerchandiseForm /></Layout>} />
         <Route path="/merchandise/:id"          element={<Layout><MerchandiseView /></Layout>} />
         <Route path="/merchandise/:id/edit"     element={<Layout><MerchandiseForm /></Layout>} />
 
+        {/* ── Subscriptions ── */}
+        <Route path="/subscriptions"            element={<Layout><SubscriptionList /></Layout>} />
+        <Route path="/subscriptions/new"        element={<Layout><SubscriptionForm /></Layout>} />
+        <Route path="/subscriptions/:id"        element={<Layout><SubscriptionView /></Layout>} />
+        <Route path="/subscriptions/:id/edit"   element={<Layout><SubscriptionForm /></Layout>} />
+
         {/* teammates add routes here */}
-        {/* <Route path="/subscriptions"            element={<Layout><SubscriptionList /></Layout>} /> */}
-        {/* <Route path="/subscriptions/new"        element={<Layout><SubscriptionForm /></Layout>} /> */}
-        {/* <Route path="/subscriptions/:id"        element={<Layout><SubscriptionView /></Layout>} /> */}
-        {/* <Route path="/subscriptions/:id/edit"   element={<Layout><SubscriptionForm /></Layout>} /> */}
+        {/* <Route path="/training-bookings"        element={<Layout><TrainingList /></Layout>} /> */}
+        {/* <Route path="/training-bookings/new"    element={<Layout><TrainingForm /></Layout>} /> */}
+        {/* <Route path="/training-bookings/:id"    element={<Layout><TrainingView /></Layout>} /> */}
+        {/* <Route path="/training-bookings/:id/edit" element={<Layout><TrainingForm /></Layout>} /> */}
 
         <Route path="*" element={<Layout><p className="state-box">404 — Page not found</p></Layout>} />
       </Routes>

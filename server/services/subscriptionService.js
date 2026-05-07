@@ -172,6 +172,7 @@ async function deleteSubscription(id) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    await client.query(`DELETE FROM subscription_line_item WHERE subscription_id = $1`, [id]);
     const result = await client.query(
       `DELETE FROM subscription WHERE id = $1 RETURNING id`, [id]
     );

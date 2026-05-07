@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.use('/merchandise',    require('./merchandiseInvoiceRoute'));
 router.use('/subscriptions',  require('./subscriptionRoute'));
+router.use('/expenses',       require('./expenseVoucherRoute'));
 // router.use('/training-bookings', require('./trainingBookingRoute'));
 // router.use('/payment-receipts',  require('./paymentReceiptRoute'));
-// router.use('/expenses',          require('./expenseRoute'));
 // router.use('/equipment',         require('./equipmentRoute'));
 
 module.exports = router;

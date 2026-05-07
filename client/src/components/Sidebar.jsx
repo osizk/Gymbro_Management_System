@@ -6,10 +6,10 @@ const NAV = [
     links: [
       { to: '/subscriptions', label: 'Subscriptions' },
       { to: '/merchandise',   label: 'Merchandise Sales' },
-      { to: '/expenses',      label: 'Expense Vouchers' },
-      // { to: '/training-bookings', label: 'Training Bookings' },
-      // { to: '/payment-receipts',  label: 'Payment Receipts' },
-      // { to: '/equipment',         label: 'Equipment Purchase' },
+      { to: '/expenses',          label: 'Expense Vouchers' },
+      { to: '/training-bookings', label: 'Training Bookings' },
+      { to: '/payment-receipts',  label: 'Payment Receipts' },
+      { to: '/equipment',         label: 'Equipment Purchase' },
     ],
   },
 ];

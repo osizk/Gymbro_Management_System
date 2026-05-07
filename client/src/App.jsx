@@ -6,9 +6,18 @@ import MerchandiseView       from './pages/Merchandise/MerchandiseView';
 import SubscriptionList      from './pages/Subscription/SubscriptionList';
 import SubscriptionForm      from './pages/Subscription/SubscriptionForm';
 import SubscriptionView      from './pages/Subscription/SubscriptionView';
-import ExpenseVoucherList    from './pages/ExpenseVoucher/ExpenseVoucherList';
-import ExpenseVoucherForm    from './pages/ExpenseVoucher/ExpenseVoucherForm';
-import ExpenseVoucherView    from './pages/ExpenseVoucher/ExpenseVoucherView';
+import ExpenseVoucherList      from './pages/ExpenseVoucher/ExpenseVoucherList';
+import ExpenseVoucherForm      from './pages/ExpenseVoucher/ExpenseVoucherForm';
+import ExpenseVoucherView      from './pages/ExpenseVoucher/ExpenseVoucherView';
+import TrainingBookingList    from './pages/TrainingBooking/TrainingBookingList';
+import TrainingBookingForm    from './pages/TrainingBooking/TrainingBookingForm';
+import TrainingBookingView    from './pages/TrainingBooking/TrainingBookingView';
+import PaymentReceiptList     from './pages/PaymentReceipt/PaymentReceiptList';
+import PaymentReceiptForm     from './pages/PaymentReceipt/PaymentReceiptForm';
+import PaymentReceiptView     from './pages/PaymentReceipt/PaymentReceiptView';
+import EquipmentPurchaseList  from './pages/EquipmentPurchase/EquipmentPurchaseList';
+import EquipmentPurchaseForm  from './pages/EquipmentPurchase/EquipmentPurchaseForm';
+import EquipmentPurchaseView  from './pages/EquipmentPurchase/EquipmentPurchaseView';
 
 function Layout({ children }) {
   return (
@@ -43,11 +52,23 @@ export default function App() {
         <Route path="/expenses/:id"          element={<Layout><ExpenseVoucherView /></Layout>} />
         <Route path="/expenses/:id/edit"     element={<Layout><ExpenseVoucherForm /></Layout>} />
 
-        {/* teammates add routes here */}
-        {/* <Route path="/training-bookings"        element={<Layout><TrainingList /></Layout>} /> */}
-        {/* <Route path="/training-bookings/new"    element={<Layout><TrainingForm /></Layout>} /> */}
-        {/* <Route path="/training-bookings/:id"    element={<Layout><TrainingView /></Layout>} /> */}
-        {/* <Route path="/training-bookings/:id/edit" element={<Layout><TrainingForm /></Layout>} /> */}
+        {/* ── Training Bookings ── */}
+        <Route path="/training-bookings"             element={<Layout><TrainingBookingList /></Layout>} />
+        <Route path="/training-bookings/new"         element={<Layout><TrainingBookingForm /></Layout>} />
+        <Route path="/training-bookings/:id"         element={<Layout><TrainingBookingView /></Layout>} />
+        <Route path="/training-bookings/:id/edit"    element={<Layout><TrainingBookingForm /></Layout>} />
+
+        {/* ── Payment Receipts ── */}
+        <Route path="/payment-receipts"              element={<Layout><PaymentReceiptList /></Layout>} />
+        <Route path="/payment-receipts/new"          element={<Layout><PaymentReceiptForm /></Layout>} />
+        <Route path="/payment-receipts/:id"          element={<Layout><PaymentReceiptView /></Layout>} />
+        <Route path="/payment-receipts/:id/edit"     element={<Layout><PaymentReceiptForm /></Layout>} />
+
+        {/* ── Equipment Purchase ── */}
+        <Route path="/equipment"                     element={<Layout><EquipmentPurchaseList /></Layout>} />
+        <Route path="/equipment/new"                 element={<Layout><EquipmentPurchaseForm /></Layout>} />
+        <Route path="/equipment/:id"                 element={<Layout><EquipmentPurchaseView /></Layout>} />
+        <Route path="/equipment/:id/edit"            element={<Layout><EquipmentPurchaseForm /></Layout>} />
 
         <Route path="*" element={<Layout><p className="state-box">404 — Page not found</p></Layout>} />
       </Routes>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllTickets, deleteTicket } from '../../api/simpleFormsApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -7,9 +8,9 @@ const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-dig
 const fmt = (n) => n != null ? Number(n).toLocaleString('th-TH', { minimumFractionDigits: 2 }) : '—';
 
 const STATUS_COLORS = {
-  OPEN:        { bg: '#fef3c7',             color: '#d97706' },
+  PENDING:     { bg: '#fef3c7',             color: '#d97706' },
   IN_PROGRESS: { bg: '#e0f2fe',             color: '#0284c7' },
-  CLOSED:      { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
+  DONE:        { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
 };
 
 export default function MaintenanceTicketList() {
@@ -19,8 +20,8 @@ export default function MaintenanceTicketList() {
   const [error, setError]     = useState(null);
   const [search, setSearch]   = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [sortKey, setSortKey] = useState('report_date');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortKey, setSortKey] = useState('id');
+  const [sortDir, setSortDir] = useState('asc');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]       = useState(1);
 
@@ -59,13 +60,7 @@ export default function MaintenanceTicketList() {
       );
     }
     if (statusFilter) data = data.filter((r) => r.status === statusFilter);
-    data.sort((a, b) => {
-      let va = a[sortKey] ?? ''; let vb = b[sortKey] ?? '';
-      if (sortKey === 'repair_cost') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0; }
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    data.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return data;
   }, [rows, search, statusFilter, sortKey, sortDir]);
 
@@ -89,9 +84,9 @@ export default function MaintenanceTicketList() {
             <input className="form-input" style={{ minWidth: 220 }} placeholder="Search ID, equipment, technician..." value={search} onChange={(e) => setSearch(e.target.value)} />
             <select className="form-input" style={{ width: 'auto' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="">All Status</option>
-              <option value="OPEN">Open</option>
+              <option value="PENDING">Pending</option>
               <option value="IN_PROGRESS">In Progress</option>
-              <option value="CLOSED">Closed</option>
+              <option value="DONE">Done</option>
             </select>
             {(search || statusFilter) && (
               <button className="btn btn-secondary" onClick={() => { setSearch(''); setStatusFilter(''); }}>Clear</button>

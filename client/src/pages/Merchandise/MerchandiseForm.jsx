@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import {
   getInvoiceById, createInvoice, updateInvoice,
   getActiveProducts, getMemberById,
@@ -29,6 +30,7 @@ export default function MerchandiseForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // ── Form state ──
   const [invoiceNo, setInvoiceNo]     = useState('Auto-generated');
@@ -76,7 +78,7 @@ export default function MerchandiseForm() {
           stock_quantity: null,
         })));
       })
-      .catch(() => alert('Failed to load invoice'))
+      .catch(() => showToast('Failed to load invoice', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -166,13 +168,15 @@ export default function MerchandiseForm() {
       };
       if (isEdit) {
         await updateInvoice(id, payload);
-        navigate(`/merchandise/${id}`);
+        showToast('Invoice updated successfully', 'success');
+        setTimeout(() => navigate(`/merchandise/${id}`), 1500);
       } else {
         const res = await createInvoice(payload);
-        navigate(`/merchandise/${res.data.id}`);
+        showToast('Invoice created successfully', 'success');
+        setTimeout(() => navigate(`/merchandise/${res.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save invoice');
+      showToast(err.response?.data?.message || 'Failed to save invoice', 'error');
     } finally {
       setSaving(false);
     }

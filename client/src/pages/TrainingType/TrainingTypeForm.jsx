@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getTrainingTypeById, createTrainingType, updateTrainingType } from '../../api/simpleFormsApi';
 
 const empty = { type_name: '', default_hourly_rate: '' };
@@ -8,6 +9,7 @@ export default function TrainingTypeForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -19,7 +21,7 @@ export default function TrainingTypeForm() {
     setLoadingPage(true);
     getTrainingTypeById(id)
       .then((res) => { const d = res.data.data; setForm({ type_name: d.type_name || '', default_hourly_rate: String(d.default_hourly_rate ?? '') }); })
-      .catch(() => alert('Failed to load training type'))
+      .catch(() => showToast('Failed to load training type', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -39,9 +41,9 @@ export default function TrainingTypeForm() {
     setSaving(true);
     try {
       const payload = { type_name: form.type_name, default_hourly_rate: parseFloat(form.default_hourly_rate) };
-      if (isEdit) { await updateTrainingType(id, payload); navigate(`/training-types/${id}`); }
-      else { const res = await createTrainingType(payload); navigate(`/training-types/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save training type'); }
+      if (isEdit) { await updateTrainingType(id, payload); showToast('Training type updated successfully', 'success'); setTimeout(() => navigate(`/training-types/${id}`), 1500); }
+      else { const res = await createTrainingType(payload); showToast('Training type created successfully', 'success'); setTimeout(() => navigate(`/training-types/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save training type', 'error'); }
     finally { setSaving(false); }
   };
 

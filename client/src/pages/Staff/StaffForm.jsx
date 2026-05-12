@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getStaffById, createStaff, updateStaff } from '../../api/simpleFormsApi';
 
 const empty = { staff_name: '', position: '', phone: '' };
@@ -8,6 +9,7 @@ export default function StaffForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -19,7 +21,7 @@ export default function StaffForm() {
     setLoadingPage(true);
     getStaffById(id)
       .then((res) => { const d = res.data.data; setForm({ staff_name: d.staff_name || '', position: d.position || '', phone: d.phone || '' }); })
-      .catch(() => alert('Failed to load staff'))
+      .catch(() => showToast('Failed to load staff', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -38,9 +40,9 @@ export default function StaffForm() {
     setSaving(true);
     try {
       const payload = { staff_name: form.staff_name, position: form.position || null, phone: form.phone };
-      if (isEdit) { await updateStaff(id, payload); navigate(`/staff/${id}`); }
-      else { const res = await createStaff(payload); navigate(`/staff/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save staff'); }
+      if (isEdit) { await updateStaff(id, payload); showToast('Staff updated successfully', 'success'); setTimeout(() => navigate(`/staff/${id}`), 1500); }
+      else { const res = await createStaff(payload); showToast('Staff created successfully', 'success'); setTimeout(() => navigate(`/staff/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save staff', 'error'); }
     finally { setSaving(false); }
   };
 

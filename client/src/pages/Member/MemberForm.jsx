@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getMemberById, createMember, updateMember } from '../../api/simpleFormsApi';
 
-const GENDER_OPTIONS = ['M', 'F'];
-const STATUS_OPTIONS = ['ACTIVE', 'INACTIVE'];
+const GENDER_OPTIONS = ['MALE', 'FEMALE', 'OTHER'];
+const STATUS_OPTIONS = ['ACTIVE', 'EXPIRED', 'CANCELLED'];
 
-const empty = { member_name: '', gender: 'M', date_of_birth: '', phone: '', email: '', address: '', join_date: new Date().toISOString().split('T')[0], status: 'ACTIVE' };
+const empty = { member_name: '', gender: 'MALE', date_of_birth: '', phone: '', email: '', address: '', join_date: new Date().toISOString().split('T')[0], status: 'ACTIVE' };
 
 export default function MemberForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -25,7 +27,7 @@ export default function MemberForm() {
         const d = res.data.data;
         setForm({
           member_name: d.member_name || '',
-          gender:      d.gender || 'M',
+          gender:      d.gender || 'MALE',
           date_of_birth: d.date_of_birth?.split('T')[0] || '',
           phone:       d.phone || '',
           email:       d.email || '',
@@ -34,7 +36,7 @@ export default function MemberForm() {
           status:      d.status || 'ACTIVE',
         });
       })
-      .catch(() => alert('Failed to load member'))
+      .catch(() => showToast('Failed to load member', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -67,13 +69,15 @@ export default function MemberForm() {
       };
       if (isEdit) {
         await updateMember(id, payload);
-        navigate(`/members/${id}`);
+        showToast('Member updated successfully', 'success');
+        setTimeout(() => navigate(`/members/${id}`), 1500);
       } else {
         const res = await createMember(payload);
-        navigate(`/members/${res.data.data.id}`);
+        showToast('Member created successfully', 'success');
+        setTimeout(() => navigate(`/members/${res.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save member');
+      showToast(err.response?.data?.message || 'Failed to save member', 'error');
     } finally {
       setSaving(false);
     }
@@ -110,7 +114,7 @@ export default function MemberForm() {
           <div>
             <label className="form-label">Gender <span style={{ color: 'var(--danger)' }}>*</span></label>
             <select className={`form-input${f('gender')}`} value={form.gender} onChange={set('gender')}>
-              {GENDER_OPTIONS.map((g) => <option key={g} value={g}>{g === 'M' ? 'Male' : 'Female'}</option>)}
+              {GENDER_OPTIONS.map((g) => <option key={g} value={g}>{g === 'MALE' ? 'Male' : g === 'FEMALE' ? 'Female' : 'Other'}</option>)}
             </select>
             {errors.gender && <p className="form-error">{errors.gender}</p>}
           </div>

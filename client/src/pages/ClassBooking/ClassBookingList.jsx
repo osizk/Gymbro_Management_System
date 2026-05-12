@@ -1,12 +1,13 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllClassBookings, deleteClassBooking } from '../../api/simpleFormsApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 const STATUS_COLORS = {
-  CONFIRMED: { bg: 'var(--green-100)',    color: 'var(--green-600)' },
+  BOOKED:    { bg: 'var(--green-100)',    color: 'var(--green-600)' },
   CANCELLED: { bg: 'var(--danger-light)', color: 'var(--danger)' },
   ATTENDED:  { bg: '#e0f2fe',             color: '#0284c7' },
 };
@@ -19,7 +20,7 @@ export default function ClassBookingList() {
   const [search, setSearch]   = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortKey, setSortKey] = useState('id');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortDir, setSortDir] = useState('asc');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]       = useState(1);
 
@@ -57,12 +58,7 @@ export default function ClassBookingList() {
       );
     }
     if (statusFilter) data = data.filter((r) => r.status === statusFilter);
-    data.sort((a, b) => {
-      let va = a[sortKey] ?? ''; let vb = b[sortKey] ?? '';
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    data.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return data;
   }, [rows, search, statusFilter, sortKey, sortDir]);
 
@@ -86,7 +82,7 @@ export default function ClassBookingList() {
             <input className="form-input" style={{ minWidth: 220 }} placeholder="Search ID, class, member..." value={search} onChange={(e) => setSearch(e.target.value)} />
             <select className="form-input" style={{ width: 'auto' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="">All Status</option>
-              <option value="CONFIRMED">Confirmed</option>
+              <option value="BOOKED">Booked</option>
               <option value="CANCELLED">Cancelled</option>
               <option value="ATTENDED">Attended</option>
             </select>

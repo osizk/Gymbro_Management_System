@@ -46,7 +46,7 @@ export default function MemberView() {
         <div className="form-grid-2">
           <div><label className="form-label">ID</label><input className="form-input readonly" readOnly value={data.id} /></div>
           <div><label className="form-label">Member Name</label><input className="form-input readonly" readOnly value={data.member_name || '—'} /></div>
-          <div><label className="form-label">Gender</label><input className="form-input readonly" readOnly value={data.gender === 'M' ? 'Male' : data.gender === 'F' ? 'Female' : '—'} /></div>
+          <div><label className="form-label">Gender</label><input className="form-input readonly" readOnly value={data.gender === 'MALE' ? 'Male' : data.gender === 'FEMALE' ? 'Female' : 'Other'} /></div>
           <div><label className="form-label">Date of Birth</label><input className="form-input readonly" readOnly value={fmtDate(data.date_of_birth)} /></div>
           <div><label className="form-label">Phone</label><input className="form-input readonly" readOnly value={data.phone || '—'} /></div>
           <div><label className="form-label">Email</label><input className="form-input readonly" readOnly value={data.email || '—'} /></div>

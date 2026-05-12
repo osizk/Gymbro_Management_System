@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllMembers, deleteMember } from '../../api/simpleFormsApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -17,7 +18,7 @@ export default function MemberList() {
   const [search, setSearch]   = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortKey, setSortKey] = useState('id');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortDir, setSortDir] = useState('asc');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]       = useState(1);
 
@@ -56,12 +57,7 @@ export default function MemberList() {
       );
     }
     if (statusFilter) data = data.filter((r) => r.status === statusFilter);
-    data.sort((a, b) => {
-      let va = a[sortKey] ?? ''; let vb = b[sortKey] ?? '';
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    data.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return data;
   }, [rows, search, statusFilter, sortKey, sortDir]);
 

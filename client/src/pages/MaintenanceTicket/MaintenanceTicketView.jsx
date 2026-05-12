@@ -5,9 +5,9 @@ import { getTicketById } from '../../api/simpleFormsApi';
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
 const fmt = (n) => n != null ? Number(n).toLocaleString('th-TH', { minimumFractionDigits: 2 }) : '—';
 const STATUS_COLORS = {
-  OPEN:        { bg: '#fef3c7',         color: '#d97706' },
+  PENDING:     { bg: '#fef3c7',         color: '#d97706' },
   IN_PROGRESS: { bg: '#e0f2fe',         color: '#0284c7' },
-  CLOSED:      { bg: 'var(--gray-100)', color: 'var(--gray-500)' },
+  DONE:        { bg: 'var(--gray-100)', color: 'var(--gray-500)' },
 };
 
 export default function MaintenanceTicketView() {

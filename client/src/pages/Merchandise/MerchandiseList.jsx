@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllInvoices, deleteInvoice } from '../../api/merchandiseInvoiceApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -19,8 +20,8 @@ export default function MerchandiseList() {
   const [search, setSearch]       = useState('');
   const [dateFrom, setDateFrom]   = useState('');
   const [dateTo, setDateTo]       = useState('');
-  const [sortKey, setSortKey]     = useState('created_at');
-  const [sortDir, setSortDir]     = useState('desc');
+  const [sortKey, setSortKey]     = useState('id');
+  const [sortDir, setSortDir]     = useState('asc');
   const [pageSize, setPageSize]   = useState(10);
   const [page, setPage]           = useState(1);
 
@@ -69,14 +70,7 @@ export default function MerchandiseList() {
     }
     if (dateFrom) rows = rows.filter((r) => r.invoice_date >= dateFrom);
     if (dateTo)   rows = rows.filter((r) => r.invoice_date <= dateTo);
-    rows.sort((a, b) => {
-      let va = a[sortKey] ?? '';
-      let vb = b[sortKey] ?? '';
-      if (sortKey === 'total_amount') { va = parseFloat(va); vb = parseFloat(vb); }
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    rows.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return rows;
   }, [invoices, search, dateFrom, dateTo, sortKey, sortDir]);
 

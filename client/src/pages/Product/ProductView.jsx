@@ -4,8 +4,9 @@ import { getProductById } from '../../api/simpleFormsApi';
 
 const fmt = (n) => Number(n || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 });
 const STATUS_COLORS = {
-  ACTIVE:   { bg: 'var(--green-100)', color: 'var(--green-600)' },
-  INACTIVE: { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
+  ACTIVE:       { bg: 'var(--green-100)', color: 'var(--green-600)' },
+  INACTIVE:     { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
+  OUT_OF_STOCK: { bg: '#fef3c7',           color: '#d97706' },
 };
 
 export default function ProductView() {

@@ -1,13 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllProducts_s, deleteProduct } from '../../api/simpleFormsApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const fmt = (n) => Number(n || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 });
 
 const STATUS_COLORS = {
-  ACTIVE:   { bg: 'var(--green-100)', color: 'var(--green-600)' },
-  INACTIVE: { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
+  ACTIVE:       { bg: 'var(--green-100)', color: 'var(--green-600)' },
+  INACTIVE:     { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
+  OUT_OF_STOCK: { bg: '#fef3c7',           color: '#d97706' },
 };
 
 export default function ProductList() {
@@ -18,7 +20,7 @@ export default function ProductList() {
   const [search, setSearch]   = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortKey, setSortKey] = useState('id');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortDir, setSortDir] = useState('asc');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]       = useState(1);
 
@@ -56,13 +58,7 @@ export default function ProductList() {
       );
     }
     if (statusFilter) data = data.filter((r) => r.status === statusFilter);
-    data.sort((a, b) => {
-      let va = a[sortKey] ?? ''; let vb = b[sortKey] ?? '';
-      if (['cost_price', 'selling_price', 'stock_quantity'].includes(sortKey)) { va = parseFloat(va); vb = parseFloat(vb); }
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    data.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return data;
   }, [rows, search, statusFilter, sortKey, sortDir]);
 
@@ -88,6 +84,7 @@ export default function ProductList() {
               <option value="">All Status</option>
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
+              <option value="OUT_OF_STOCK">Out of Stock</option>
             </select>
             {(search || statusFilter) && (
               <button className="btn btn-secondary" onClick={() => { setSearch(''); setStatusFilter(''); }}>Clear</button>

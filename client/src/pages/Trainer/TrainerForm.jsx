@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getTrainerById, createTrainer, updateTrainer } from '../../api/simpleFormsApi';
 
 const empty = { trainer_name: '', specialization: '', phone: '', email: '', commission_rate: '' };
@@ -8,6 +9,7 @@ export default function TrainerForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -22,7 +24,7 @@ export default function TrainerForm() {
         const d = res.data.data;
         setForm({ trainer_name: d.trainer_name || '', specialization: d.specialization || '', phone: d.phone || '', email: d.email || '', commission_rate: String(d.commission_rate ?? '') });
       })
-      .catch(() => alert('Failed to load trainer'))
+      .catch(() => showToast('Failed to load trainer', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 

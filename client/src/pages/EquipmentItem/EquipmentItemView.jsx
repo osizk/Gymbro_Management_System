@@ -4,9 +4,9 @@ import { getEquipmentItemById } from '../../api/simpleFormsApi';
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
 const STATUS_COLORS = {
-  ACTIVE:      { bg: 'var(--green-100)',    color: 'var(--green-600)' },
-  MAINTENANCE: { bg: '#fef3c7',             color: '#d97706' },
-  RETIRED:     { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
+  ACTIVE:             { bg: 'var(--green-100)',    color: 'var(--green-600)' },
+  UNDER_MAINTENANCE: { bg: '#fef3c7',             color: '#d97706' },
+  RETIRED:            { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
 };
 
 export default function EquipmentItemView() {

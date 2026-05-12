@@ -90,3 +90,24 @@ rm -rf node_modules package-lock.json npm install
 
 -   ใช้ service name เช่น backend, db แทน localhost
 -   ถ้าพัง ลอง down -v แล้ว up ใหม่
+-   run in adminer if key duplicate error
+SELECT setval(pg_get_serial_sequence('subscription_line_item', 'id'),
+              COALESCE((SELECT MAX(id) FROM subscription_line_item), 1));
+
+SELECT setval(pg_get_serial_sequence('merchandise_line_item', 'id'),
+              COALESCE((SELECT MAX(id) FROM merchandise_line_item), 1));
+
+SELECT setval(pg_get_serial_sequence('expense_line_item', 'id'),
+              COALESCE((SELECT MAX(id) FROM expense_line_item), 1));
+
+SELECT setval(pg_get_serial_sequence('training_session', 'id'),
+              COALESCE((SELECT MAX(id) FROM training_session), 1));
+
+SELECT setval(pg_get_serial_sequence('member', 'id'),
+              COALESCE((SELECT MAX(id) FROM member), 1));
+
+SELECT setval(pg_get_serial_sequence('product_category', 'id'),
+              COALESCE((SELECT MAX(id) FROM product_category), 1));
+
+SELECT setval(pg_get_serial_sequence('product', 'id'),
+              COALESCE((SELECT MAX(id) FROM product), 1));

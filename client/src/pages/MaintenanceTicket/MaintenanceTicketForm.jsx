@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getTicketById, createTicket, updateTicket, getEquipmentForTickets, getStaffForTickets } from '../../api/simpleFormsApi';
 
-const STATUS_OPTIONS = ['OPEN', 'IN_PROGRESS', 'CLOSED'];
-const empty = { equipment_id: '', report_date: new Date().toISOString().split('T')[0], issue_description: '', technician_id: '', status: 'OPEN', repair_cost: '' };
+const STATUS_OPTIONS = ['PENDING', 'IN_PROGRESS', 'DONE'];
+const empty = { equipment_id: '', report_date: new Date().toISOString().split('T')[0], issue_description: '', technician_id: '', status: 'PENDING', repair_cost: '' };
 
 export default function MaintenanceTicketForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [equipment, setEquipment] = useState([]);
@@ -30,7 +32,7 @@ export default function MaintenanceTicketForm() {
         const d = res.data.data;
         setForm({ equipment_id: String(d.equipment_id), report_date: d.report_date?.split('T')[0] || '', issue_description: d.issue_description || '', technician_id: String(d.technician_id), status: d.status || 'OPEN', repair_cost: d.repair_cost != null ? String(d.repair_cost) : '' });
       })
-      .catch(() => alert('Failed to load ticket'))
+      .catch(() => showToast('Failed to load ticket', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -52,9 +54,9 @@ export default function MaintenanceTicketForm() {
     setSaving(true);
     try {
       const payload = { equipment_id: form.equipment_id, report_date: form.report_date, issue_description: form.issue_description, technician_id: Number(form.technician_id), status: form.status, repair_cost: form.repair_cost ? parseFloat(form.repair_cost) : null };
-      if (isEdit) { await updateTicket(id, payload); navigate(`/maintenance-tickets/${id}`); }
-      else { const res = await createTicket(payload); navigate(`/maintenance-tickets/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save ticket'); }
+      if (isEdit) { await updateTicket(id, payload); showToast('Maintenance ticket updated successfully', 'success'); setTimeout(() => navigate(`/maintenance-tickets/${id}`), 1500); }
+      else { const res = await createTicket(payload); showToast('Maintenance ticket created successfully', 'success'); setTimeout(() => navigate(`/maintenance-tickets/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save ticket', 'error'); }
     finally { setSaving(false); }
   };
 

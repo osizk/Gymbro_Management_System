@@ -4,7 +4,7 @@ import { getClassBookingById } from '../../api/simpleFormsApi';
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
 const STATUS_COLORS = {
-  CONFIRMED: { bg: 'var(--green-100)',    color: 'var(--green-600)' },
+  BOOKED:    { bg: 'var(--green-100)',    color: 'var(--green-600)' },
   CANCELLED: { bg: 'var(--danger-light)', color: 'var(--danger)' },
   ATTENDED:  { bg: '#e0f2fe',             color: '#0284c7' },
 };

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import {
   getClassBookingById, createClassBooking, updateClassBooking,
   getClassesForBooking, getMembersForBooking,
 } from '../../api/simpleFormsApi';
 
-const STATUS_OPTIONS = ['CONFIRMED', 'CANCELLED', 'ATTENDED'];
-const empty = { class_id: '', member_id: '', booking_date: new Date().toISOString().split('T')[0], status: 'CONFIRMED', check_in_time: '' };
+const STATUS_OPTIONS = ['BOOKED', 'CANCELLED', 'ATTENDED'];
+const empty = { class_id: '', member_id: '', booking_date: new Date().toISOString().split('T')[0], status: 'BOOKED', check_in_time: '' };
 
 export default function ClassBookingForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [classes, setClasses]   = useState([]);
@@ -33,7 +35,7 @@ export default function ClassBookingForm() {
         const d = res.data.data;
         setForm({ class_id: String(d.class_id), member_id: String(d.member_id), booking_date: d.booking_date?.split('T')[0] || '', status: d.status || 'CONFIRMED', check_in_time: d.check_in_time || '' });
       })
-      .catch(() => alert('Failed to load booking'))
+      .catch(() => showToast('Failed to load booking', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -54,9 +56,9 @@ export default function ClassBookingForm() {
     setSaving(true);
     try {
       const payload = { class_id: form.class_id, member_id: Number(form.member_id), booking_date: form.booking_date, status: form.status, check_in_time: form.check_in_time || null };
-      if (isEdit) { await updateClassBooking(id, payload); navigate(`/class-bookings/${id}`); }
-      else { const res = await createClassBooking(payload); navigate(`/class-bookings/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save booking'); }
+      if (isEdit) { await updateClassBooking(id, payload); showToast('Class booking updated successfully', 'success'); setTimeout(() => navigate(`/class-bookings/${id}`), 1500); }
+      else { const res = await createClassBooking(payload); showToast('Class booking created successfully', 'success'); setTimeout(() => navigate(`/class-bookings/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save booking', 'error'); }
     finally { setSaving(false); }
   };
 

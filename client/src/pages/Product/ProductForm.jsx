@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getProductById, createProduct, updateProduct, getProductCategories } from '../../api/simpleFormsApi';
 
-const STATUS_OPTIONS = ['ACTIVE', 'INACTIVE'];
+const STATUS_OPTIONS = ['ACTIVE', 'INACTIVE', 'OUT_OF_STOCK'];
 const empty = { product_name: '', category_id: '', cost_price: '', selling_price: '', stock_quantity: '', status: 'ACTIVE' };
 
 export default function ProductForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [categories, setCategories] = useState([]);
@@ -28,7 +30,7 @@ export default function ProductForm() {
         const d = res.data.data;
         setForm({ product_name: d.product_name || '', category_id: String(d.category_id ?? ''), cost_price: String(d.cost_price ?? ''), selling_price: String(d.selling_price ?? ''), stock_quantity: String(d.stock_quantity ?? ''), status: d.status || 'ACTIVE' });
       })
-      .catch(() => alert('Failed to load product'))
+      .catch(() => showToast('Failed to load product', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -53,9 +55,16 @@ export default function ProductForm() {
     setSaving(true);
     try {
       const payload = { product_name: form.product_name, category_id: Number(form.category_id), cost_price: parseFloat(form.cost_price), selling_price: parseFloat(form.selling_price), stock_quantity: parseInt(form.stock_quantity, 10), status: form.status };
-      if (isEdit) { await updateProduct(id, payload); navigate(`/products/${id}`); }
-      else { const res = await createProduct(payload); navigate(`/products/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save product'); }
+      if (isEdit) { 
+        await updateProduct(id, payload);
+        showToast('Product updated successfully', 'success');
+        setTimeout(() => navigate(`/products/${id}`), 1500);
+      } else { 
+        const res = await createProduct(payload);
+        showToast('Product created successfully', 'success');
+        setTimeout(() => navigate(`/products/${res.data.data.id}`), 1500);
+      }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save product', 'error'); }
     finally { setSaving(false); }
   };
 

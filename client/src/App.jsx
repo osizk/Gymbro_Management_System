@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar               from './components/Sidebar';
+import Toast                 from './components/Toast';
+import { ToastProvider }     from './contexts/ToastContext';
 import MerchandiseList       from './pages/Merchandise/MerchandiseList';
 import MerchandiseForm       from './pages/Merchandise/MerchandiseForm';
 import MerchandiseView       from './pages/Merchandise/MerchandiseView';
@@ -73,9 +75,11 @@ function Layout({ children }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/subscriptions" replace />} />
+    <ToastProvider>
+      <BrowserRouter>
+        <Toast />
+        <Routes>
+          <Route path="/" element={<Navigate to="/subscriptions" replace />} />
 
         {/* ── Merchandise ── */}
         <Route path="/merchandise"              element={<Layout><MerchandiseList /></Layout>} />
@@ -200,5 +204,6 @@ export default function App() {
         <Route path="*" element={<Layout><p className="state-box">404 — Page not found</p></Layout>} />
       </Routes>
     </BrowserRouter>
+    </ToastProvider>
   );
 }

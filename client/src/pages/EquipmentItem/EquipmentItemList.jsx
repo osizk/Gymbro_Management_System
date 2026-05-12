@@ -1,14 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { compareSortValues } from '../../utils/sortUtils';
 import { getAllEquipmentItems, deleteEquipmentItem } from '../../api/simpleFormsApi';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 const STATUS_COLORS = {
-  ACTIVE:      { bg: 'var(--green-100)',    color: 'var(--green-600)' },
-  MAINTENANCE: { bg: '#fef3c7',             color: '#d97706' },
-  RETIRED:     { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
+  ACTIVE:             { bg: 'var(--green-100)',    color: 'var(--green-600)' },
+  UNDER_MAINTENANCE: { bg: '#fef3c7',             color: '#d97706' },
+  RETIRED:            { bg: 'var(--gray-100)',     color: 'var(--gray-500)' },
 };
 
 export default function EquipmentItemList() {
@@ -19,7 +20,7 @@ export default function EquipmentItemList() {
   const [search, setSearch]   = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortKey, setSortKey] = useState('id');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortDir, setSortDir] = useState('asc');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]       = useState(1);
 
@@ -57,12 +58,7 @@ export default function EquipmentItemList() {
       );
     }
     if (statusFilter) data = data.filter((r) => r.status === statusFilter);
-    data.sort((a, b) => {
-      let va = a[sortKey] ?? ''; let vb = b[sortKey] ?? '';
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    data.sort((a, b) => compareSortValues(a[sortKey], b[sortKey], sortDir));
     return data;
   }, [rows, search, statusFilter, sortKey, sortDir]);
 
@@ -87,7 +83,7 @@ export default function EquipmentItemList() {
             <select className="form-input" style={{ width: 'auto' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="">All Status</option>
               <option value="ACTIVE">Active</option>
-              <option value="MAINTENANCE">Maintenance</option>
+              <option value="UNDER_MAINTENANCE">Under Maintenance</option>
               <option value="RETIRED">Retired</option>
             </select>
             {(search || statusFilter) && (

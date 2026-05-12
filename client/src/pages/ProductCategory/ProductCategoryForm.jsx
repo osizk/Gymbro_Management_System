@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getProductCategoryById, createProductCategory, updateProductCategory } from '../../api/simpleFormsApi';
 
 export default function ProductCategoryForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [categoryName, setCategoryName] = useState('');
   const [loadingPage, setLoadingPage]   = useState(isEdit);
@@ -17,7 +19,7 @@ export default function ProductCategoryForm() {
     setLoadingPage(true);
     getProductCategoryById(id)
       .then((res) => setCategoryName(res.data.data.category_name || ''))
-      .catch(() => alert('Failed to load product category'))
+      .catch(() => showToast('Failed to load product category', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -26,9 +28,9 @@ export default function ProductCategoryForm() {
     setError('');
     setSaving(true);
     try {
-      if (isEdit) { await updateProductCategory(id, { category_name: categoryName }); navigate(`/product-categories/${id}`); }
-      else { const res = await createProductCategory({ category_name: categoryName }); navigate(`/product-categories/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save'); }
+      if (isEdit) { await updateProductCategory(id, { category_name: categoryName }); showToast('Product category updated successfully', 'success'); setTimeout(() => navigate(`/product-categories/${id}`), 1500); }
+      else { const res = await createProductCategory({ category_name: categoryName }); showToast('Product category created successfully', 'success'); setTimeout(() => navigate(`/product-categories/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save', 'error'); }
     finally { setSaving(false); }
   };
 

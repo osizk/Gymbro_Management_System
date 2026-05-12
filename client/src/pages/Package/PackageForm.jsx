@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getPackageById, createPackage, updatePackage } from '../../api/simpleFormsApi';
 
 const empty = { package_name: '', duration_months: '', base_price: '', description: '' };
@@ -8,6 +9,7 @@ export default function PackageForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -22,7 +24,7 @@ export default function PackageForm() {
         const d = res.data.data;
         setForm({ package_name: d.package_name || '', duration_months: String(d.duration_months ?? ''), base_price: String(d.base_price ?? ''), description: d.description || '' });
       })
-      .catch(() => alert('Failed to load package'))
+      .catch(() => showToast('Failed to load package', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -44,9 +46,9 @@ export default function PackageForm() {
     setSaving(true);
     try {
       const payload = { package_name: form.package_name, duration_months: parseInt(form.duration_months, 10), base_price: parseFloat(form.base_price), description: form.description || null };
-      if (isEdit) { await updatePackage(id, payload); navigate(`/packages/${id}`); }
-      else { const res = await createPackage(payload); navigate(`/packages/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save package'); }
+      if (isEdit) { await updatePackage(id, payload); showToast('Package updated successfully', 'success'); setTimeout(() => navigate(`/packages/${id}`), 1500); }
+      else { const res = await createPackage(payload); showToast('Package created successfully', 'success'); setTimeout(() => navigate(`/packages/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save package', 'error'); }
     finally { setSaving(false); }
   };
 

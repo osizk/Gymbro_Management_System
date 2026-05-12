@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getEquipmentItemById, createEquipmentItem, updateEquipmentItem, getEquipmentCatsForItems } from '../../api/simpleFormsApi';
 
-const STATUS_OPTIONS = ['ACTIVE', 'MAINTENANCE', 'RETIRED'];
+const STATUS_OPTIONS = ['ACTIVE', 'UNDER_MAINTENANCE', 'RETIRED'];
 const empty = { equipment_name: '', category_id: '', purchase_date: '', status: 'ACTIVE' };
 
 export default function EquipmentItemForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [categories, setCategories] = useState([]);
@@ -28,7 +30,7 @@ export default function EquipmentItemForm() {
         const d = res.data.data;
         setForm({ equipment_name: d.equipment_name || '', category_id: String(d.category_id ?? ''), purchase_date: d.purchase_date?.split('T')[0] || '', status: d.status || 'ACTIVE' });
       })
-      .catch(() => alert('Failed to load equipment'))
+      .catch(() => showToast('Failed to load equipment', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -48,9 +50,9 @@ export default function EquipmentItemForm() {
     setSaving(true);
     try {
       const payload = { equipment_name: form.equipment_name, category_id: form.category_id, purchase_date: form.purchase_date || null, status: form.status };
-      if (isEdit) { await updateEquipmentItem(id, payload); navigate(`/equipment-items/${id}`); }
-      else { const res = await createEquipmentItem(payload); navigate(`/equipment-items/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save equipment'); }
+      if (isEdit) { await updateEquipmentItem(id, payload); showToast('Equipment updated successfully', 'success'); setTimeout(() => navigate(`/equipment-items/${id}`), 1500); }
+      else { const res = await createEquipmentItem(payload); showToast('Equipment created successfully', 'success'); setTimeout(() => navigate(`/equipment-items/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save equipment', 'error'); }
     finally { setSaving(false); }
   };
 

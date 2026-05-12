@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import { getClassById, createClass, updateClass } from '../../api/simpleFormsApi';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -9,6 +10,7 @@ export default function ClassForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [form, setForm]         = useState(empty);
   const [loadingPage, setLoadingPage] = useState(isEdit);
@@ -23,7 +25,7 @@ export default function ClassForm() {
         const d = res.data.data;
         setForm({ class_name: d.class_name || '', schedule_day: d.schedule_day || 'Monday', start_time: d.start_time || '', end_time: d.end_time || '', max_capacity: String(d.max_capacity ?? ''), class_price: String(d.class_price ?? '') });
       })
-      .catch(() => alert('Failed to load class'))
+      .catch(() => showToast('Failed to load class', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -48,9 +50,9 @@ export default function ClassForm() {
     setSaving(true);
     try {
       const payload = { class_name: form.class_name, schedule_day: form.schedule_day, start_time: form.start_time, end_time: form.end_time, max_capacity: parseInt(form.max_capacity, 10), class_price: parseFloat(form.class_price) };
-      if (isEdit) { await updateClass(id, payload); navigate(`/classes/${id}`); }
-      else { const res = await createClass(payload); navigate(`/classes/${res.data.data.id}`); }
-    } catch (err) { alert(err.response?.data?.message || 'Failed to save class'); }
+      if (isEdit) { await updateClass(id, payload); showToast('Class updated successfully', 'success'); setTimeout(() => navigate(`/classes/${id}`), 1500); }
+      else { const res = await createClass(payload); showToast('Class created successfully', 'success'); setTimeout(() => navigate(`/classes/${res.data.data.id}`), 1500); }
+    } catch (err) { showToast(err.response?.data?.message || 'Failed to save class', 'error'); }
     finally { setSaving(false); }
   };
 

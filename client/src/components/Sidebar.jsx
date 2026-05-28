@@ -3,8 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 const NAV = [
   {
-    id: 'transactions',
-    section: 'Transactions',
+    id: 'lineitem_form',
+    section: 'Lineitem Form',
     links: [
       { to: '/subscriptions',    label: 'Subscriptions' },
       { to: '/merchandise',      label: 'Merchandise Sales' },
@@ -15,43 +15,24 @@ const NAV = [
     ],
   },
   {
-    id: 'people',
-    section: 'People',
+    id: 'simple_forms',
+    section: 'Simple Form Group',
     links: [
+      // People
       { to: '/members',  label: 'Members' },
       { to: '/trainers', label: 'Trainers' },
       { to: '/staff',    label: 'Staff' },
-    ],
-  },
-  {
-    id: 'programs',
-    section: 'Programs',
-    links: [
+      // Programs
       { to: '/packages',        label: 'Packages' },
       { to: '/training-types',  label: 'Training Types' },
       { to: '/classes',         label: 'Classes' },
       { to: '/class-bookings',  label: 'Class Bookings' },
-    ],
-  },
-  {
-    id: 'inventory',
-    section: 'Inventory',
-    links: [
+      // Inventory
       { to: '/products', label: 'Products' },
-    ],
-  },
-  {
-    id: 'facilities',
-    section: 'Facilities',
-    links: [
+      // Facilities
       { to: '/equipment-items',      label: 'Equipment' },
       { to: '/maintenance-tickets',  label: 'Maintenance Tickets' },
-    ],
-  },
-  {
-    id: 'settings',
-    section: 'Settings',
-    links: [
+      // Settings
       { to: '/expense-categories',    label: 'Expense Categories' },
       { to: '/payment-methods',       label: 'Payment Methods' },
       { to: '/equipment-categories',  label: 'Equipment Categories' },
@@ -71,7 +52,7 @@ export default function Sidebar() {
 
   const [openSections, setOpenSections] = useState(() => {
     const init = {};
-    NAV.forEach((g) => { init[g.id] = g.id === 'transactions' || isGroupActive(g.links); });
+    NAV.forEach((g) => { init[g.id] = g.id === 'lineitem_form' || isGroupActive(g.links); });
     return init;
   });
 

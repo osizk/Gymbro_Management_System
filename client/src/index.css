@@ -157,6 +157,50 @@ textarea {
   box-shadow: 0 10px 24px rgba(20,184,166,0.24);
 }
 
+.sidebar-section-toggle {
+  margin: 0 8px;
+}
+
+.sidebar-section-toggle:hover {
+  background: rgba(255,255,255,0.10) !important;
+}
+
+.sidebar-section-title {
+  color: rgba(226,232,240,0.78) !important;
+}
+
+.sidebar-section-toggle.active .sidebar-section-title {
+  color: var(--green-300) !important;
+}
+
+.sidebar-section-count {
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226,232,240,0.16) !important;
+  color: var(--white) !important;
+  border: 1px solid rgba(255,255,255,0.18);
+  font-weight: 800 !important;
+  text-shadow: none;
+}
+
+.sidebar-section-toggle.active .sidebar-section-count {
+  background: var(--green-300) !important;
+  color: var(--ink-950) !important;
+  border-color: transparent;
+}
+
+.sidebar-section-toggle:hover .sidebar-section-title,
+.sidebar-section-toggle:hover .sidebar-section-count {
+  color: var(--white) !important;
+}
+
+.sidebar-section-toggle.active:hover .sidebar-section-count {
+  color: var(--ink-950) !important;
+}
+
 .main-content {
   margin-left: 250px;
   flex: 1;
@@ -813,17 +857,6 @@ tbody td {
 .sidebar button:hover,
 .sidebar button[style]:hover {
   background: rgba(255,255,255,0.09) !important;
-  color: var(--white) !important;
-}
-
-.sidebar button:hover span,
-.sidebar button[style]:hover span {
-  color: var(--white) !important;
-}
-
-.sidebar button:hover span span,
-.sidebar button[style]:hover span span {
-  background: rgba(255,255,255,0.13) !important;
   color: var(--white) !important;
 }
 

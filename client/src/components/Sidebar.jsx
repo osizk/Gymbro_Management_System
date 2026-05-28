@@ -174,6 +174,7 @@ export default function Sidebar() {
           <div key={group.id} style={{ marginBottom: 2 }}>
             <button
               onClick={() => toggleSection(group.id)}
+              className={`sidebar-section-toggle${groupActive ? ' active' : ''}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -186,10 +187,8 @@ export default function Sidebar() {
                 borderRadius: 8,
                 transition: 'background 0.15s',
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gray-100)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
             >
-              <span style={{
+              <span className="sidebar-section-title" style={{
                 fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: '0.7px',
@@ -199,7 +198,7 @@ export default function Sidebar() {
                 {group.section}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{
+                <span className="sidebar-section-count" style={{
                   fontSize: 10,
                   fontWeight: 600,
                   background: groupActive ? 'var(--green-100)' : 'var(--gray-100)',

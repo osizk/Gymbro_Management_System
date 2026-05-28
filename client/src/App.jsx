@@ -63,6 +63,8 @@ import EquipmentCategoryView from './pages/EquipmentCategory/EquipmentCategoryVi
 import ProductCategoryList   from './pages/ProductCategory/ProductCategoryList';
 import ProductCategoryForm   from './pages/ProductCategory/ProductCategoryForm';
 import ProductCategoryView   from './pages/ProductCategory/ProductCategoryView';
+import ReportList            from './pages/Report/ReportList';
+import ReportView            from './pages/Report/ReportView';
 
 function Layout({ children }) {
   return (
@@ -200,6 +202,10 @@ export default function App() {
         <Route path="/product-categories/new"       element={<Layout><ProductCategoryForm /></Layout>} />
         <Route path="/product-categories/:id"       element={<Layout><ProductCategoryView /></Layout>} />
         <Route path="/product-categories/:id/edit"  element={<Layout><ProductCategoryForm /></Layout>} />
+
+        {/* ── Reports ── */}
+        <Route path="/reports"                      element={<Layout><ReportList /></Layout>} />
+        <Route path="/reports/:reportId"            element={<Layout><ReportView /></Layout>} />
 
         <Route path="*" element={<Layout><p className="state-box">404 — Page not found</p></Layout>} />
       </Routes>

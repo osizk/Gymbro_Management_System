@@ -28,4 +28,7 @@ router.use('/payment-methods',       require('./paymentMethodRoute'));
 router.use('/equipment-categories',  require('./equipmentCategoryRoute'));
 router.use('/product-categories',    require('./productCategoryRoute'));
 
+// ─── Report routes ────────────────────────────────────────────────────────────
+router.use('/reports', require('./reportRoute'));
+
 module.exports = router;

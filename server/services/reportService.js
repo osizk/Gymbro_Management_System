@@ -525,12 +525,7 @@ async function getMerchandiseInvoicePrint(f) {
     ],
     rows: result.rows,
     detail: result.rows[0] || null,
-    summary: {
-      recordCount: result.rows.length,
-      label: 'Active Subscriptions',
-      value: result.rows.length,
-      type: 'number',
-    },
+    summary: { recordCount: result.rows.length, totalAmount: moneySummary(result.rows, 'extended_price') },
   };
 }
 

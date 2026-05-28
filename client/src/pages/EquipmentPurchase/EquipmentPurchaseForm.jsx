@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import {
   getPurchaseById, createPurchase, updatePurchase,
   getAllStaff, getAllPaymentMethods, getAllEquipmentCategories,
@@ -25,6 +26,7 @@ export default function EquipmentPurchaseForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // ── Form state ──
   const [purchaseNo, setPurchaseNo]       = useState('Auto-generated');
@@ -83,7 +85,7 @@ export default function EquipmentPurchaseForm() {
           extended_cost:   parseFloat(l.extended_cost),
         })));
       })
-      .catch(() => alert('Failed to load purchase'))
+      .catch(() => showToast('Failed to load purchase', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -164,13 +166,15 @@ export default function EquipmentPurchaseForm() {
       };
       if (isEdit) {
         await updatePurchase(id, payload);
-        navigate(`/equipment/${id}`);
+        showToast('Equipment purchase updated successfully', 'success');
+        setTimeout(() => navigate(`/equipment/${id}`), 1500);
       } else {
         const res = await createPurchase(payload);
-        navigate(`/equipment/${res.data.data.id}`);
+        showToast('Equipment purchase created successfully', 'success');
+        setTimeout(() => navigate(`/equipment/${res.data.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save purchase');
+      showToast(err.response?.data?.message || 'Failed to save purchase', 'error');
     } finally {
       setSaving(false);
     }

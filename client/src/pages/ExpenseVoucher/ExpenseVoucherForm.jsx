@@ -5,6 +5,7 @@ import {
   getAllExpenseCategories, getAllStaff, getAllPaymentMethods,
 } from '../../api/expenseVoucherApi';
 import StaffSearchModal from '../../components/StaffSearchModal';
+import { useToast } from '../../hooks/useToast';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const emptyLine = () => ({
@@ -22,6 +23,7 @@ export default function ExpenseVoucherForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // ── Form state ──
   const [voucherNo, setVoucherNo]     = useState('Auto-generated');
@@ -79,7 +81,7 @@ export default function ExpenseVoucherForm() {
           description:   l.description,
         })));
       })
-      .catch(() => alert('Failed to load voucher'))
+      .catch(() => showToast('Failed to load voucher', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -152,13 +154,15 @@ export default function ExpenseVoucherForm() {
       };
       if (isEdit) {
         await updateVoucher(id, payload);
-        navigate(`/expenses/${id}`);
+        showToast('Expense voucher updated successfully', 'success');
+        setTimeout(() => navigate(`/expenses/${id}`), 1500);
       } else {
         const res = await createVoucher(payload);
-        navigate(`/expenses/${res.data.id}`);
+        showToast('Expense voucher created successfully', 'success');
+        setTimeout(() => navigate(`/expenses/${res.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save voucher');
+      showToast(err.response?.data?.message || 'Failed to save voucher', 'error');
     } finally {
       setSaving(false);
     }

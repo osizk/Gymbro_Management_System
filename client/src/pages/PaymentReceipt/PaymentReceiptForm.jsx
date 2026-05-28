@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import {
   getReceiptById, createReceipt, updateReceipt,
   getAllPaymentMethods,
@@ -25,6 +26,7 @@ export default function PaymentReceiptForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // ── Form state ──
   const [receiptNo, setReceiptNo]           = useState('Auto-generated');
@@ -75,7 +77,7 @@ export default function PaymentReceiptForm() {
           notes:             l.notes || '',
         })));
       })
-      .catch(() => alert('Failed to load receipt'))
+      .catch(() => showToast('Failed to load receipt', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -136,13 +138,15 @@ export default function PaymentReceiptForm() {
       };
       if (isEdit) {
         await updateReceipt(id, payload);
-        navigate(`/payment-receipts/${id}`);
+        showToast('Payment receipt updated successfully', 'success');
+        setTimeout(() => navigate(`/payment-receipts/${id}`), 1500);
       } else {
         const res = await createReceipt(payload);
-        navigate(`/payment-receipts/${res.data.data.id}`);
+        showToast('Payment receipt created successfully', 'success');
+        setTimeout(() => navigate(`/payment-receipts/${res.data.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save receipt');
+      showToast(err.response?.data?.message || 'Failed to save receipt', 'error');
     } finally {
       setSaving(false);
     }

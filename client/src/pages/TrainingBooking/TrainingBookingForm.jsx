@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
 import {
   getBookingById, createBooking, updateBooking,
   getAllTrainers, getAllTrainingTypes, getAllMembers,
@@ -34,6 +35,7 @@ export default function TrainingBookingForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // ── Form state ──
   const [bookingNo, setBookingNo]     = useState('Auto-generated');
@@ -93,7 +95,7 @@ export default function TrainingBookingForm() {
           notes:            l.notes || '',
         })));
       })
-      .catch(() => alert('Failed to load booking'))
+      .catch(() => showToast('Failed to load booking', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -188,13 +190,15 @@ export default function TrainingBookingForm() {
       };
       if (isEdit) {
         await updateBooking(id, payload);
-        navigate(`/training-bookings/${id}`);
+        showToast('Training booking updated successfully', 'success');
+        setTimeout(() => navigate(`/training-bookings/${id}`), 1500);
       } else {
         const res = await createBooking(payload);
-        navigate(`/training-bookings/${res.data.data.id}`);
+        showToast('Training booking created successfully', 'success');
+        setTimeout(() => navigate(`/training-bookings/${res.data.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save booking');
+      showToast(err.response?.data?.message || 'Failed to save booking', 'error');
     } finally {
       setSaving(false);
     }

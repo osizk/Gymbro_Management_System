@@ -6,6 +6,7 @@ import {
 import { getMemberById } from '../../api/merchandiseInvoiceApi';
 import MemberSearchModal  from '../../components/MemberSearchModal';
 import PackageSearchModal from '../../components/PackageSearchModal';
+import { useToast } from '../../hooks/useToast';
 
 const STATUS_OPTIONS = ['ACTIVE', 'EXPIRED', 'CANCELLED'];
 
@@ -36,6 +37,7 @@ export default function SubscriptionForm() {
   const { id }   = useParams();
   const isEdit   = Boolean(id);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // Header state
   const [subNo, setSubNo]               = useState('Auto-generated');
@@ -86,7 +88,7 @@ export default function SubscriptionForm() {
           extended_price: parseFloat(l.extended_price),
         })));
       })
-      .catch(() => alert('Failed to load subscription'))
+      .catch(() => showToast('Failed to load subscription', 'error'))
       .finally(() => setLoadingPage(false));
   }, [id, isEdit]);
 
@@ -187,13 +189,15 @@ export default function SubscriptionForm() {
       };
       if (isEdit) {
         await updateSubscription(id, payload);
-        navigate(`/subscriptions/${id}`);
+        showToast('Subscription updated successfully', 'success');
+        setTimeout(() => navigate(`/subscriptions/${id}`), 1500);
       } else {
         const res = await createSubscription(payload);
-        navigate(`/subscriptions/${res.data.id}`);
+        showToast('Subscription created successfully', 'success');
+        setTimeout(() => navigate(`/subscriptions/${res.data.id}`), 1500);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save subscription');
+      showToast(err.response?.data?.message || 'Failed to save subscription', 'error');
     } finally {
       setSaving(false);
     }

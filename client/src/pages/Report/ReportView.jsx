@@ -114,9 +114,11 @@ export default function ReportView() {
                       value={filters[filter.name] || ''}
                       onChange={(e) => handleFilterChange(filter.name, e.target.value)}
                     >
-                      {filter.options.map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
+                      {filter.options.map((option) => {
+                        const value = typeof option === 'object' ? option.value : option;
+                        const label = typeof option === 'object' ? option.label : option;
+                        return <option key={value} value={value}>{label}</option>;
+                      })}
                     </select>
                   ) : (
                     <input

@@ -51,7 +51,7 @@ const reportGroups = [
         filters: [
           { name: 'from_date', label: 'From Date', type: 'date', defaultValue: '2026-01-01' },
           { name: 'to_date', label: 'To Date', type: 'date', defaultValue: '2026-01-24' },
-          { name: 'trainer_id', label: 'Trainer ID', type: 'text', defaultValue: '0' },
+          { name: 'trainer_id', label: 'Trainer', type: 'select', defaultValue: '0', lookup: 'trainers' },
         ],
       },
       {
@@ -88,7 +88,7 @@ const reportGroups = [
         filters: [
           { name: 'from_date', label: 'From Date', type: 'date', defaultValue: '2026-01-01' },
           { name: 'to_date', label: 'To Date', type: 'date', defaultValue: '2026-03-24' },
-          { name: 'product_id', label: 'Product', type: 'text', defaultValue: '0' },
+          { name: 'product_id', label: 'Product', type: 'select', defaultValue: '0', lookup: 'products' },
         ],
       },
       {
@@ -125,7 +125,7 @@ const reportGroups = [
         filters: [
           { name: 'from_date', label: 'From Date', type: 'date', defaultValue: '2026-01-01' },
           { name: 'to_date', label: 'To Date', type: 'date', defaultValue: '2026-03-24' },
-          { name: 'method_id', label: 'Payment Method', type: 'text', defaultValue: '0' },
+          { name: 'method_id', label: 'Payment Method', type: 'select', defaultValue: '0', lookup: 'paymentMethods' },
         ],
       },
       {
@@ -162,7 +162,7 @@ const reportGroups = [
         filters: [
           { name: 'from_date', label: 'From Date', type: 'date', defaultValue: '2026-01-01' },
           { name: 'to_date', label: 'To Date', type: 'date', defaultValue: '2026-03-24' },
-          { name: 'category_id', label: 'Category', type: 'text', defaultValue: '0' },
+          { name: 'category_id', label: 'Category', type: 'select', defaultValue: '0', lookup: 'expenseCategories' },
         ],
       },
       {
@@ -241,6 +241,55 @@ function filtersFor(report, query) {
 
 function moneySummary(rows, key) {
   return rows.reduce((sum, row) => sum + Number(row[key] || 0), 0);
+}
+
+async function optionsForLookup(lookup) {
+  if (!lookup) return null;
+
+  const lookupQueries = {
+    trainers: {
+      sql: `SELECT id::text AS value, trainer_name AS label FROM trainer ORDER BY trainer_name`,
+      allLabel: 'All trainers',
+    },
+    products: {
+      sql: `SELECT id::text AS value, product_name AS label FROM product ORDER BY product_name`,
+      allLabel: 'All products',
+    },
+    paymentMethods: {
+      sql: `SELECT id::text AS value, method_name AS label FROM payment_method ORDER BY method_name`,
+      allLabel: 'All methods',
+    },
+    expenseCategories: {
+      sql: `SELECT id::text AS value, category_name AS label FROM expense_category ORDER BY category_name`,
+      allLabel: 'All categories',
+    },
+  };
+
+  const config = lookupQueries[lookup];
+  if (!config) return null;
+
+  const result = await pool.query(config.sql);
+  return [{ value: '0', label: config.allLabel }, ...result.rows];
+}
+
+async function hydrateFilterOptions(report) {
+  const filters = [];
+  for (const filter of report.filters) {
+    if (filter.lookup) {
+      filters.push({
+        ...filter,
+        options: await optionsForLookup(filter.lookup),
+      });
+    } else if (Array.isArray(filter.options)) {
+      filters.push({
+        ...filter,
+        options: filter.options.map((option) => ({ value: option, label: option })),
+      });
+    } else {
+      filters.push(filter);
+    }
+  }
+  return filters;
 }
 
 async function getReportGroups() {
@@ -676,7 +725,9 @@ async function getExpenseByCategory(f) {
 async function getActiveSubscriptionsAsOf(f) {
   const result = await pool.query(
     `SELECT s.id AS subscription_no, m.id AS member_id, m.member_name,
-            p.package_name, sli.start_date, sli.end_date, s.status, sli.extended_price
+            p.package_name, sli.start_date, sli.end_date,
+            (sli.end_date - $1::date) AS remaining_days,
+            s.status, sli.extended_price
      FROM subscription s
      JOIN member m ON m.id = s.member_id
      JOIN subscription_line_item sli ON sli.subscription_id = s.id
@@ -694,6 +745,7 @@ async function getActiveSubscriptionsAsOf(f) {
       { key: 'package_name', label: 'Package' },
       { key: 'start_date', label: 'Start Date', type: 'date' },
       { key: 'end_date', label: 'End Date', type: 'date' },
+      { key: 'remaining_days', label: 'Remaining Days', align: 'right' },
       { key: 'status', label: 'Status' },
       { key: 'extended_price', label: 'Amount', type: 'money', align: 'right' },
     ],
@@ -746,27 +798,48 @@ async function getMonthlyBusinessPerformance(f) {
        FROM merchandise_invoice WHERE invoice_date BETWEEN $1::date AND $2::date GROUP BY DATE_TRUNC('month', invoice_date)
      ),
      monthly_expense AS (
-       SELECT DATE_TRUNC('month', voucher_date)::date AS month_start, SUM(total_expense) AS total_expense
+       SELECT DATE_TRUNC('month', voucher_date)::date AS month_start, SUM(total_expense) AS operational_expense
        FROM expense_voucher WHERE voucher_date BETWEEN $1::date AND $2::date GROUP BY DATE_TRUNC('month', voucher_date)
+     ),
+     monthly_equipment_purchase AS (
+       SELECT DATE_TRUNC('month', purchase_date)::date AS month_start, SUM(total_purchase_cost) AS equipment_purchase
+       FROM equipment_purchase WHERE purchase_date BETWEEN $1::date AND $2::date GROUP BY DATE_TRUNC('month', purchase_date)
+     ),
+     monthly_trainer_commission AS (
+       SELECT DATE_TRUNC('month', tb.booking_date)::date AS month_start,
+              SUM(ts.session_cost * t.commission_rate / 100) AS trainer_commission
+       FROM training_booking tb
+       JOIN training_session ts ON ts.booking_id = tb.id
+       JOIN trainer t ON t.id = tb.trainer_id
+       WHERE tb.booking_date BETWEEN $1::date AND $2::date
+       GROUP BY DATE_TRUNC('month', tb.booking_date)
      ),
      months AS (
        SELECT month_start FROM monthly_subscription
        UNION SELECT month_start FROM monthly_training
        UNION SELECT month_start FROM monthly_merchandise
        UNION SELECT month_start FROM monthly_expense
+       UNION SELECT month_start FROM monthly_equipment_purchase
+       UNION SELECT month_start FROM monthly_trainer_commission
      )
      SELECT m.month_start,
             COALESCE(ms.subscription_revenue, 0) AS subscription_revenue,
             COALESCE(mt.training_revenue, 0) AS training_revenue,
             COALESCE(mm.merchandise_revenue, 0) AS merchandise_revenue,
             COALESCE(ms.subscription_revenue, 0) + COALESCE(mt.training_revenue, 0) + COALESCE(mm.merchandise_revenue, 0) AS total_revenue,
-            COALESCE(me.total_expense, 0) AS total_expense,
-            COALESCE(ms.subscription_revenue, 0) + COALESCE(mt.training_revenue, 0) + COALESCE(mm.merchandise_revenue, 0) - COALESCE(me.total_expense, 0) AS net_profit
+            COALESCE(me.operational_expense, 0) AS operational_expense,
+            COALESCE(mep.equipment_purchase, 0) AS equipment_purchase,
+            COALESCE(mtc.trainer_commission, 0) AS trainer_commission,
+            COALESCE(me.operational_expense, 0) + COALESCE(mep.equipment_purchase, 0) + COALESCE(mtc.trainer_commission, 0) AS total_expense,
+            COALESCE(ms.subscription_revenue, 0) + COALESCE(mt.training_revenue, 0) + COALESCE(mm.merchandise_revenue, 0)
+              - (COALESCE(me.operational_expense, 0) + COALESCE(mep.equipment_purchase, 0) + COALESCE(mtc.trainer_commission, 0)) AS net_profit
      FROM months m
      LEFT JOIN monthly_subscription ms ON ms.month_start = m.month_start
      LEFT JOIN monthly_training mt ON mt.month_start = m.month_start
      LEFT JOIN monthly_merchandise mm ON mm.month_start = m.month_start
      LEFT JOIN monthly_expense me ON me.month_start = m.month_start
+     LEFT JOIN monthly_equipment_purchase mep ON mep.month_start = m.month_start
+     LEFT JOIN monthly_trainer_commission mtc ON mtc.month_start = m.month_start
      ORDER BY m.month_start`,
     [f.from_date, f.to_date]
   );
@@ -777,7 +850,10 @@ async function getMonthlyBusinessPerformance(f) {
       { key: 'training_revenue', label: 'Training', type: 'money', align: 'right' },
       { key: 'merchandise_revenue', label: 'Merchandise', type: 'money', align: 'right' },
       { key: 'total_revenue', label: 'Total Revenue', type: 'money', align: 'right' },
-      { key: 'total_expense', label: 'Expense', type: 'money', align: 'right' },
+      { key: 'operational_expense', label: 'Operational Expense', type: 'money', align: 'right' },
+      { key: 'equipment_purchase', label: 'Equipment Purchase', type: 'money', align: 'right' },
+      { key: 'trainer_commission', label: 'Trainer Commission', type: 'money', align: 'right' },
+      { key: 'total_expense', label: 'Total Expense', type: 'money', align: 'right' },
       { key: 'net_profit', label: 'Net Profit', type: 'money', align: 'right' },
     ],
     rows: result.rows,
@@ -812,10 +888,12 @@ async function getReportById(reportId, query = {}) {
 
   const { group, report } = found;
   const filters = filtersFor(report, query);
+  const filterDefinitions = await hydrateFilterOptions(report);
   const data = await reportQueries[reportId](filters);
 
   return {
     ...report,
+    filters: filterDefinitions,
     groupId: group.id,
     groupName: group.groupName,
     memberId: group.memberId,

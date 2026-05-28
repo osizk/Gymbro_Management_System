@@ -1,497 +1,687 @@
-# GymBro — Teammate Developer Guide
+# GymBro Management System - Developer Guide
 
-This guide gives you everything you need to build your assigned module.  
-Read it fully before writing a single line of code — it will save you hours.
+This guide documents the current GymBro project as it exists in this repository.
+It is meant for teammates who need to run, understand, debug, or extend the
+system.
+
+GymBro is a full-stack gym management application with a React/Vite frontend,
+an Express backend, and a PostgreSQL database. The app is organized around two
+kinds of screens:
+
+- Line-item modules, where one header record owns multiple detail lines.
+- Simple form modules, where one screen manages one table-like resource.
+
+The codebase already contains the main modules. When adding or fixing features,
+follow the patterns already used in the matching module type.
 
 ---
 
-## 1. Project Overview
+## 1. Tech Stack
 
-GymBro is a Gym Management System built by a team. Each person owns one module.  
-The project is already running. You are adding a new module on top of existing code.
+Backend:
 
-**Tech Stack**
-- Backend: Node.js + Express + PostgreSQL (pg)
-- Frontend: React + Vite + React Router v6
-- Styling: Custom CSS (`index.css`) with CSS variables — no Tailwind classes needed
-- Docker: Everything runs in containers via `docker-compose`
+- Node.js
+- Express 5
+- PostgreSQL through `pg`
+- CommonJS modules
+- `dotenv` for local environment values
+
+Frontend:
+
+- React 19
+- Vite
+- React Router
+- Axios
+- Shared custom CSS in `client/src/index.css`
+
+Infrastructure:
+
+- Docker Compose
+- PostgreSQL 15
+- Adminer for database inspection
 
 ---
 
 ## 2. Project Structure
 
-```
-project/
+```text
+Gymbro_Management_System/
 ├── docker-compose.yml
-├── database/               ← SQL init scripts (already done, don't touch)
-│
+├── README.md
+├── GUIDE.md
+├── database/
+│   ├── 01_init.sql
+│   ├── 02_seed.sql
+│   └── csv/
 ├── server/
-│   ├── app.js              ← Express config (don't touch)
-│   ├── server.js           ← Entry point (don't touch)
-│   ├── db/index.js         ← PostgreSQL pool (don't touch)
+│   ├── app.js
+│   ├── server.js
+│   ├── db/
+│   │   └── index.js
 │   ├── routes/
-│   │   ├── index.js        ← REGISTER YOUR ROUTE HERE (one line)
-│   │   ├── merchandiseInvoiceRoute.js   ← reference example
-│   │   └── subscriptionRoute.js         ← reference example
 │   ├── controllers/
-│   │   ├── merchandiseInvoiceController.js
-│   │   └── subscriptionController.js
 │   └── services/
-│       ├── merchandiseInvoiceService.js
-│       └── subscriptionService.js
-│
 └── client/
+    ├── vite.config.js
+    ├── index.html
     └── src/
-        ├── App.jsx              ← ADD YOUR ROUTES HERE
-        ├── index.css            ← shared styles (don't touch)
-        ├── components/
-        │   ├── Sidebar.jsx           ← ADD YOUR LINK HERE
-        │   ├── MemberSearchModal.jsx ← reusable, use it
-        │   ├── PackageSearchModal.jsx
-        │   └── ProductSearchModal.jsx
+        ├── App.jsx
+        ├── main.jsx
+        ├── index.css
         ├── api/
-        │   ├── axiosInstance.js        ← shared Axios (don't touch)
-        │   ├── merchandiseInvoiceApi.js ← reference example
-        │   └── subscriptionApi.js       ← reference example
-        └── pages/
-            ├── Merchandise/
-            │   ├── MerchandiseList.jsx
-            │   ├── MerchandiseForm.jsx
-            │   └── MerchandiseView.jsx
-            └── Subscription/
-                ├── SubscriptionList.jsx
-                ├── SubscriptionForm.jsx
-                └── SubscriptionView.jsx
+        ├── components/
+        ├── contexts/
+        ├── hooks/
+        ├── pages/
+        └── utils/
 ```
+
+Important files:
+
+- `docker-compose.yml` starts database, Adminer, backend, and frontend.
+- `database/01_init.sql` defines enums, tables, keys, and relationships.
+- `database/02_seed.sql` imports seed data from `database/csv`.
+- `server/app.js` creates the Express app, middleware, route mount, 404 handler,
+  and global error handler.
+- `server/routes/index.js` mounts every backend module under `/api`.
+- `server/db/index.js` creates the PostgreSQL connection pool.
+- `client/src/App.jsx` defines all frontend routes and wraps pages in the shared
+  layout.
+- `client/src/components/Sidebar.jsx` defines the navigation groups.
+- `client/src/api/axiosInstance.js` creates the shared Axios client with
+  `baseURL: '/api'`.
+- `client/src/index.css` contains the design system classes used by the pages.
 
 ---
 
-## 3. Module Assignment
+## 3. Running The Project
 
-| Module | Route prefix | ID format | Person |
-|---|---|---|---|
-| Merchandise Sales ✅ | `/merchandise` | `INV-YYYY-NNNNNN` | Done |
-| Subscriptions ✅ | `/subscriptions` | `SUB-YYYY-NNNNNN` | Done |
-| Training Bookings | `/training-bookings` | `BK-YYYY-NNNNNN` | Your name |
-| Payment Receipts | `/payment-receipts` | `RCP-YYYY-NNNNNN` | Your name |
-| Expense Vouchers | `/expenses` | `EXP-YYYY-NNNNNN` | Your name |
-| Equipment Purchase | `/equipment` | `EPO-YYYY-NNNNNN` | Your name |
-
----
-
-## 4. Every Module Has Exactly These Files
-
-### Backend (3 files)
-```
-server/services/{module}Service.js        ← DB queries + business logic
-server/controllers/{module}Controller.js  ← req/res handling, calls service
-server/routes/{module}Route.js            ← Express router
-```
-
-### Frontend (4 files)
-```
-client/src/api/{module}Api.js
-client/src/pages/{Module}/{Module}List.jsx   ← table + filters + pagination
-client/src/pages/{Module}/{Module}Form.jsx   ← create + edit (detected by URL param)
-client/src/pages/{Module}/{Module}View.jsx   ← read-only view + print
-```
-
-### Plus register in (2 shared files — one line each)
-```
-server/routes/index.js      ← router.use('/your-path', require('./yourRoute'))
-client/src/App.jsx          ← 4 Route entries
-client/src/components/Sidebar.jsx ← 1 NavLink entry
-```
-
----
-
-## 5. Step-by-Step: How to Build Your Module
-
-Follow this exact order. Don't skip steps.
-
-### Step 1 — Service file
-Copy `subscriptionService.js` as your starting point. Change:
-- `generateXxxId()` — prefix string (e.g. `BK-`, `RCP-`, `EXP-`)
-- Table names in all queries
-- Column names to match your schema
-- Business logic (e.g. session cost calculation, stock checks)
-
-### Step 2 — Controller file
-Copy `subscriptionController.js`. Change:
-- Import your service instead
-- Validation checks to match your required fields
-- Export function names
-
-### Step 3 — Route file
-Copy `subscriptionRoute.js`. Change:
-- Import your controller
-- Add/remove routes as needed (e.g. lookup endpoints for dropdowns)
-
-### Step 4 — Register route
-Open `server/routes/index.js`, add one line:
-```js
-router.use('/your-path', require('./yourRoute'));
-```
-
-### Step 5 — API file
-Copy `subscriptionApi.js`. Change function names and paths to match your module.
-
-### Step 6 — List page
-Copy `SubscriptionList.jsx`. Change:
-- Import your API functions
-- Column headers and `td` content to match your data
-- Filter fields (search placeholder, date fields, status filter if needed)
-- Navigation paths (`/your-path`, `/your-path/new`, `/your-path/:id/edit`)
-
-### Step 7 — Form page
-Copy `SubscriptionForm.jsx`. This is the most work. Change:
-- Header fields (your table's columns)
-- Line items table columns
-- Which modals to use (Member, Package, Product — or none)
-- Validation rules
-- Payload shape sent to backend
-
-### Step 8 — View page
-Copy `SubscriptionView.jsx`. Change:
-- Which fields show in the invoice paper layout
-- Line items table columns
-
-### Step 9 — Register in App.jsx
-Add 4 routes:
-```jsx
-import YourList from './pages/YourModule/YourList';
-import YourForm from './pages/YourModule/YourForm';
-import YourView from './pages/YourModule/YourView';
-
-<Route path="/your-path"           element={<Layout><YourList /></Layout>} />
-<Route path="/your-path/new"       element={<Layout><YourForm /></Layout>} />
-<Route path="/your-path/:id"       element={<Layout><YourView /></Layout>} />
-<Route path="/your-path/:id/edit"  element={<Layout><YourForm /></Layout>} />
-```
-
-### Step 10 — Register in Sidebar.jsx
-Add one link inside the `NAV` array:
-```js
-{ to: '/your-path', label: 'Your Module Name' },
-```
-
----
-
-## 6. API Response Shape
-
-Every endpoint always returns one of these two shapes. Never break this convention.
-
-```json
-{ "success": true, "data": { ... } }
-{ "success": false, "message": "Error description" }
-```
-
----
-
-## 7. Auto-Generated ID Pattern
-
-Every header table uses `PREFIX-YYYY-NNNNNN` where NNNNNN resets each year.
-
-Copy this function from any service and change the prefix and table name:
-
-```js
-async function generateYourId(client) {
-  const year = new Date().getFullYear();
-  const prefix = `BK-${year}-`;                          // ← change prefix
-  const result = await client.query(
-    `SELECT id FROM training_booking                      -- ← change table
-     WHERE id LIKE $1 ORDER BY id DESC LIMIT 1`,
-    [`${prefix}%`]
-  );
-  let nextNum = 1;
-  if (result.rows.length > 0) {
-    const lastNum = parseInt(result.rows[0].id.split('-')[2], 10);
-    nextNum = lastNum + 1;
-  }
-  return `${prefix}${String(nextNum).padStart(6, '0')}`;
-}
-```
-
----
-
-## 8. DB Transactions — Always Use for Write Operations
-
-All create/update/delete must use a transaction. Copy this pattern exactly:
-
-```js
-async function createSomething(data) {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-
-    // ... your inserts/updates here ...
-
-    await client.query('COMMIT');
-    return await getSomethingById(newId);
-  } catch (err) {
-    await client.query('ROLLBACK');
-    throw err;
-  } finally {
-    client.release();   // ← ALWAYS release, even on error
-  }
-}
-```
-
----
-
-## 9. Reusable Modals (already built — just import)
-
-| Modal | File | Props |
-|---|---|---|
-| Member search | `MemberSearchModal.jsx` | `onSelect(member)`, `onClose()` |
-| Product search | `ProductSearchModal.jsx` | `products[]`, `onSelect(product)`, `onClose()` |
-| Package search | `PackageSearchModal.jsx` | `packages[]`, `onSelect(pkg)`, `onClose()` |
-
-Usage pattern (same for all modals):
-```jsx
-import MemberSearchModal from '../../components/MemberSearchModal';
-
-// In state:
-const [showMemberModal, setShowMemberModal] = useState(false);
-
-// In JSX:
-{showMemberModal && (
-  <MemberSearchModal
-    onSelect={(member) => {
-      setMemberId(String(member.id));
-      setMemberName(member.member_name);
-      setShowMemberModal(false);
-    }}
-    onClose={() => setShowMemberModal(false)}
-  />
-)}
-
-// Trigger button:
-<button onClick={() => setShowMemberModal(true)}>🔍</button>
-```
-
-To add a **new modal** for your own LOV (e.g. Trainer, Staff):
-Copy `ProductSearchModal.jsx`, change the column headers and row content, pass your data as a prop.
-
----
-
-## 10. CSS Classes Reference
-
-All styling uses class names from `index.css`. Never write inline styles for layout — use these:
-
-| Class | Use for |
-|---|---|
-| `page-title` | Main page heading |
-| `page-subtitle` | Sub-text under heading |
-| `page-header` | Flex row: title left, button right |
-| `card` | White rounded card container |
-| `card-body` | Padding inside card |
-| `form-label` | Field label |
-| `form-input` | Any input/select |
-| `form-input readonly` | Read-only grey input |
-| `form-input autofill` | Auto-filled yellow-green input |
-| `form-input computed` | Computed right-aligned grey input |
-| `form-input error` | Red border on validation fail |
-| `form-error` | Red error text below input |
-| `form-grid-2` | 2-column grid for header fields |
-| `form-section-title` | Section label above fields |
-| `divider` | Horizontal line |
-| `btn btn-primary` | Green action button |
-| `btn btn-secondary` | White/grey secondary button |
-| `btn btn-danger` | Red danger button |
-| `table-wrapper` | Scrollable table container |
-| `line-table` | Line items table inside form |
-| `action-btn edit` | Green text Edit button in table |
-| `action-btn delete` | Red text Delete button in table |
-| `badge badge-green` | Green pill badge |
-| `badge badge-gray` | Grey pill badge |
-| `filter-bar` | Flex row of filter inputs |
-| `pagination` | Pagination footer row |
-| `page-btn` | Individual page number button |
-| `page-btn active` | Current page button |
-| `state-box` | Centered loading/empty/error box |
-| `total-block` | Right-aligned total container |
-| `total-inner` | Green total amount box |
-| `total-label` | "Total Amount" label |
-| `total-value` | Big green amount number |
-| `modal-overlay` | Full-screen modal backdrop |
-| `modal` | Modal card |
-| `modal-header` | Modal title + close button row |
-| `modal-title` | Modal heading text |
-| `modal-close` | ✕ close button |
-| `modal-search` | Search input area in modal |
-| `modal-body` | Scrollable list in modal |
-| `modal-row` | Clickable row in modal list |
-| `modal-row-id` | Small grey ID in modal row |
-| `modal-empty` | Empty/loading state in modal |
-| `invoice-paper` | White document container (view page) |
-| `invoice-top` | Logo + meta header row |
-| `invoice-brand` | Logo + company name |
-| `invoice-id` | Big green document number |
-| `invoice-table` | Line items table on view page |
-| `invoice-total-row` | Right-aligned total on view page |
-| `invoice-total-box` | Green total box on view page |
-| `invoice-footer` | Footer text on view page |
-| `view-header-bar` | Back/Edit/Print button row |
-| `view-actions` | Button group in view header |
-
----
-
-## 11. Navigation Flow (important — follow this)
-
-```
-List page
-  ↓ click "+ New"
-Form page (create mode — no :id in URL)
-  ↓ save
-View page (read-only)
-  ↓ click "Edit"
-Form page (edit mode — :id in URL)
-  ↓ save
-View page
-  ↓ click "← Back"
-List page
-```
-
-**How form detects create vs edit mode:**
-```js
-const { id } = useParams();
-const isEdit = Boolean(id);
-```
-
-**After save, always navigate to view:**
-```js
-if (isEdit) {
-  await updateSomething(id, payload);
-  navigate(`/your-path/${id}`);
-} else {
-  const res = await createSomething(payload);
-  navigate(`/your-path/${res.data.id}`);  // ← use the returned ID
-}
-```
-
----
-
-## 12. Common Mistakes to Avoid
-
-| Mistake | Fix |
-|---|---|
-| Forgetting `client.release()` | Always put it in `finally {}` |
-| `DECIMAL` from pg comes back as string `"5.00"` | Always `parseFloat()` before arithmetic |
-| Sequence out of sync after manual DB inserts | Run `SELECT setval(pg_get_serial_sequence('table','id'), (SELECT MAX(id) FROM table))` in Adminer |
-| Vite env variable not updating | Rebuild with `docker-compose up --build` |
-| Route conflict (`:id` catches `/new`) | Always register `/new` route BEFORE `/:id` in App.jsx |
-| Modal closes on row click but data doesn't fill | Check that `onSelect` is called before `onClose` |
-| `FOR UPDATE` missing on stock/quantity check | Use `SELECT ... FOR UPDATE` to prevent race conditions |
-
----
-
-## 13. Running the Project
+First-time start or rebuild:
 
 ```bash
-# First time or after changing package.json
 docker-compose up --build
-
-# Daily use
-docker-compose up -d       # start in background
-docker-compose down        # stop, keep DB data
-docker-compose down -v     # stop + wipe DB
-
-# If node_modules error
-rm -rf server/node_modules client/node_modules
-docker-compose up --build
-
-# Restart only backend (after backend-only changes)
-docker-compose restart backend
 ```
 
-**URLs:**
-- App: `http://localhost:5173`
-- Adminer (DB viewer): `http://localhost:8081`
-- Backend API: `http://localhost:5000/api`
+Daily start:
+
+```bash
+docker-compose up -d
+```
+
+Stop containers but keep database volume:
+
+```bash
+docker-compose down
+```
+
+Stop containers and delete database volume:
+
+```bash
+docker-compose down -v
+```
+
+URLs:
+
+- Frontend: `http://localhost:5173`
+- Backend base: `http://localhost:5000/api`
+- Adminer: `http://localhost:8081`
+- PostgreSQL host port: `5432`
+
+Adminer login:
+
+- System: `PostgreSQL`
+- Server: `db`
+- Username: `gymbro_admin`
+- Password: `1111`
+- Database: `gymbro_db`
+
+Docker service names matter inside containers. The frontend Vite proxy sends
+`/api` requests to `http://backend:5000`, and the backend connects to database
+host `db`.
 
 ---
 
-## 14. Giving Context to Your Claude
+## 4. Docker And Environment
 
-When you start a new Claude conversation to build your module, paste this prompt:
+`docker-compose.yml` defines four services:
 
+- `db`: PostgreSQL 15 with database `gymbro_db`.
+- `adminer`: database browser on port `8081`.
+- `backend`: builds `server/`, exposes port `5000`, mounts local server files.
+- `frontend`: builds `client/`, exposes port `5173`, mounts local client files.
+
+Backend environment values are provided directly in Compose:
+
+```text
+DB_HOST=db
+DB_USER=gymbro_admin
+DB_PASSWORD=1111
+DB_NAME=gymbro_db
+PORT=5000
 ```
-I'm building a module for a Gym Management System called GymBro.
-The project uses: Node.js + Express + PostgreSQL (pg) backend,
-React + Vite + React Router v6 frontend, custom CSS with CSS variables.
 
-The project already has two working modules (Merchandise and Subscriptions)
-that I'll share as reference. I need you to build [YOUR MODULE NAME].
+The backend Dockerfile starts the server with:
 
-Here is the database schema for my tables:
-[PASTE YOUR CREATE TABLE SQL HERE]
+```bash
+node server.js
+```
 
-Here is the UI mockup description:
-[DESCRIBE YOUR FORM OR PASTE MOCKUP DETAILS]
+The frontend Dockerfile starts Vite with:
 
-Rules to follow:
-- Backend: service / controller / route pattern
-- Always use DB transactions for writes (BEGIN/COMMIT/ROLLBACK + client.release() in finally)
-- ID format: PREFIX-YYYY-NNNNNN resetting each year
-- API response shape: { success, data } or { success, message }
-- Frontend: List + Form + View pages, same CSS classes as existing modules
-- Form detects create vs edit via useParams() id
-- After save: navigate to view page, not list page
-- End date auto-calculates from start date + duration (never manually editable)
-- parseFloat() all DECIMAL values from pg before arithmetic
-
-Please ask me any questions before starting.
+```bash
+npm run dev -- --host
 ```
 
 ---
 
-## 15. Database Quick Reference
+## 5. Database Overview
 
-**Connection** — configured in `server/db/index.js`, uses `.env` vars:
+`database/01_init.sql` creates enum types first, then simple form tables, then
+line-item tables.
+
+Enums:
+
+- `gender_type`: `MALE`, `FEMALE`, `OTHER`
+- `member_status_type`: `ACTIVE`, `EXPIRED`, `CANCELLED`
+- `booking_status_type`: `BOOKED`, `CANCELLED`, `ATTENDED`
+- `equipment_status_type`: `ACTIVE`, `UNDER_MAINTENANCE`, `RETIRED`
+- `ticket_status_type`: `PENDING`, `IN_PROGRESS`, `DONE`
+- `product_status_type`: `ACTIVE`, `INACTIVE`, `OUT_OF_STOCK`
+- `subscription_status_type`: `ACTIVE`, `EXPIRED`, `CANCELLED`
+- `reference_type`: `SUBSCRIPTION`, `TRAINING`, `CLASS`, `MERCHANDISE`
+
+Simple form tables:
+
+- `member`
+- `trainer`
+- `package`
+- `training_type`
+- `class`
+- `class_booking`
+- `equipment_category`
+- `equipment`
+- `staff`
+- `maintenance_ticket`
+- `expense_category`
+- `payment_method`
+- `product_category`
+- `product`
+
+Line-item modules:
+
+- `subscription` with `subscription_line_item`
+- `training_booking` with `training_session`
+- `payment_receipt` with `receipt_line_item`
+- `expense_voucher` with `expense_line_item`
+- `merchandise_invoice` with `merchandise_line_item`
+- `equipment_purchase` with `equipment_purchase_item`
+
+Seed data:
+
+- `database/02_seed.sql` imports CSV files from `database/csv`.
+- The database scripts run automatically only when the PostgreSQL volume is first
+  created.
+- If you change init or seed SQL after the database already exists, run
+  `docker-compose down -v` and then rebuild/start again.
+
+---
+
+## 6. Backend Architecture
+
+The backend request path is:
+
+```text
+server.js -> app.js -> routes/index.js -> route file -> controller -> service -> db
 ```
-DB_HOST=db   DB_USER=gymbro_admin   DB_PASSWORD=1111   DB_NAME=gymbro_db
+
+`server/app.js`:
+
+- Enables CORS.
+- Parses JSON bodies.
+- Mounts all routes under `/api`.
+- Returns JSON 404 responses.
+- Uses a global error handler for uncaught server errors.
+
+`server/db/index.js`:
+
+- Creates one shared PostgreSQL pool.
+- Reads DB settings from environment variables with local defaults.
+
+Every normal module follows this shape:
+
+```text
+server/routes/exampleRoute.js
+server/controllers/exampleController.js
+server/services/exampleService.js
 ```
 
-**Adminer** — `http://localhost:8081`
-- System: PostgreSQL
-- Server: db
-- Username: gymbro_admin
-- Password: 1111
-- Database: gymbro_db
+Routes should stay thin. Controllers validate request bodies and format
+responses. Services own SQL queries, transactions, calculations, ID generation,
+and lookup queries.
 
-**Fix sequence after manual inserts:**
+Standard response shapes:
+
+```json
+{ "success": true, "data": {} }
+{ "success": true, "message": "Deleted" }
+{ "success": false, "message": "Something went wrong" }
+```
+
+---
+
+## 7. Backend Route Map
+
+All paths below are mounted under `/api`.
+
+Line-item modules:
+
+| Frontend area | Backend base | Main endpoints |
+| --- | --- | --- |
+| Merchandise Sales | `/merchandise` | `/invoices`, `/invoices/:id`, `/products/active`, `/members/active`, `/members/:id` |
+| Subscriptions | `/subscriptions` | `/`, `/:id`, `/packages` |
+| Expense Vouchers | `/expenses` | `/vouchers`, `/vouchers/:id`, `/categories`, `/staff`, `/payment-methods` |
+| Training Bookings | `/training-bookings` | `/`, `/:id`, `/trainers`, `/training-types`, `/members` |
+| Payment Receipts | `/payment-receipts` | `/`, `/:id`, `/payment-methods` |
+| Equipment Purchase | `/equipment` | `/`, `/:id`, `/staff`, `/payment-methods`, `/equipment-categories` |
+
+Simple form modules:
+
+| Resource | Backend base | Notes |
+| --- | --- | --- |
+| Members | `/members` | CRUD |
+| Trainers | `/trainers` | CRUD |
+| Staff | `/staff` | CRUD |
+| Packages | `/packages` | CRUD |
+| Training Types | `/training-types` | CRUD |
+| Classes | `/classes` | CRUD |
+| Class Bookings | `/class-bookings` | CRUD plus `/classes` and `/members` lookups |
+| Products | `/products` | CRUD plus `/categories` lookup |
+| Equipment Items | `/equipment-items` | CRUD plus `/categories` lookup |
+| Maintenance Tickets | `/maintenance-tickets` | CRUD plus `/equipment` and `/staff` lookups |
+| Expense Categories | `/expense-categories` | CRUD |
+| Payment Methods | `/payment-methods` | CRUD |
+| Equipment Categories | `/equipment-categories` | CRUD |
+| Product Categories | `/product-categories` | CRUD |
+
+---
+
+## 8. Line-Item Module Rules
+
+Line-item modules have a header record and child line records. Create and update
+operations should use transactions because several rows must change together.
+
+Common service pattern:
+
+```js
+const client = await pool.connect();
+try {
+  await client.query('BEGIN');
+  // insert/update/delete header and lines
+  await client.query('COMMIT');
+} catch (err) {
+  await client.query('ROLLBACK');
+  throw err;
+} finally {
+  client.release();
+}
+```
+
+Current ID prefixes:
+
+| Module | Header table | Prefix |
+| --- | --- | --- |
+| Merchandise Sales | `merchandise_invoice` | `INV-YYYY-NNNNNN` |
+| Subscriptions | `subscription` | `SUB-YYYY-NNNNNN` |
+| Expense Vouchers | `expense_voucher` | `EXP-YYYY-NNNNNN` |
+| Training Bookings | `training_booking` | `BK-YYYY-NNNNNN` |
+| Payment Receipts | `payment_receipt` | `RCP-YYYY-NNNNNN` |
+| Equipment Purchase | `equipment_purchase` | `EPO-YYYY-NNNNNN` |
+| Maintenance Tickets | `maintenance_ticket` | `MNT-YYYY-NNNNNN` |
+
+Important module behavior:
+
+- Subscriptions calculate `extended_price = base_price * (1 - discount_pct / 100)`
+  and sum line totals into `subscription.total_amount`.
+- Merchandise sales calculate line extended prices, deduct product stock on
+  create/update, restore stock on update/delete, and use `SELECT ... FOR UPDATE`
+  when checking product stock.
+- Training bookings calculate `duration_minutes` from start/end time and
+  `session_cost = duration_minutes / 60 * hourly_rate`.
+- Payment receipts sum `amount_paid` into `payment_receipt.total_paid`.
+- Expense vouchers sum line `amount` into `expense_voucher.total_expense`.
+- Equipment purchases calculate `extended_cost = quantity * unit_cost` and sum
+  it into `equipment_purchase.total_purchase_cost`.
+
+Most update flows replace all old line items with the new submitted line item
+array. Preserve that approach unless you intentionally redesign the module.
+
+---
+
+## 9. Frontend Architecture
+
+The frontend starts in `client/src/main.jsx`, which renders `App`.
+
+`client/src/App.jsx`:
+
+- Wraps the app in `ToastProvider`.
+- Uses `BrowserRouter`.
+- Renders the global `Toast`.
+- Defines a `Layout` with `Sidebar` and the page content.
+- Redirects `/` to `/subscriptions`.
+- Defines list, new, view, and edit routes for every resource.
+
+Frontend module shape:
+
+```text
+client/src/api/exampleApi.js
+client/src/pages/Example/ExampleList.jsx
+client/src/pages/Example/ExampleForm.jsx
+client/src/pages/Example/ExampleView.jsx
+```
+
+List pages usually include:
+
+- Data loading with `useEffect`.
+- Search filters.
+- Optional status/date filters.
+- Client-side sorting.
+- Pagination with page size options `10`, `25`, `50`.
+- Row actions for view, edit, and delete.
+
+Form pages usually include:
+
+- Create/edit detection with `useParams`.
+- Loading existing data in edit mode.
+- Validation before submit.
+- Controlled inputs.
+- Lookup dropdowns or search modals.
+- Navigation to the view page after save.
+
+View pages usually include:
+
+- Read-only display.
+- Back, edit, and print actions.
+- Invoice-style layout for line-item documents.
+
+---
+
+## 10. Frontend Route Map
+
+Main line-item pages:
+
+| Module | List | New | View | Edit |
+| --- | --- | --- | --- | --- |
+| Merchandise | `/merchandise` | `/merchandise/new` | `/merchandise/:id` | `/merchandise/:id/edit` |
+| Subscriptions | `/subscriptions` | `/subscriptions/new` | `/subscriptions/:id` | `/subscriptions/:id/edit` |
+| Expenses | `/expenses` | `/expenses/new` | `/expenses/:id` | `/expenses/:id/edit` |
+| Training Bookings | `/training-bookings` | `/training-bookings/new` | `/training-bookings/:id` | `/training-bookings/:id/edit` |
+| Payment Receipts | `/payment-receipts` | `/payment-receipts/new` | `/payment-receipts/:id` | `/payment-receipts/:id/edit` |
+| Equipment Purchase | `/equipment` | `/equipment/new` | `/equipment/:id` | `/equipment/:id/edit` |
+
+Simple form pages:
+
+- `/members`
+- `/trainers`
+- `/staff`
+- `/packages`
+- `/training-types`
+- `/classes`
+- `/class-bookings`
+- `/products`
+- `/equipment-items`
+- `/maintenance-tickets`
+- `/expense-categories`
+- `/payment-methods`
+- `/equipment-categories`
+- `/product-categories`
+
+Each simple form module also has `/new`, `/:id`, and `/:id/edit`.
+
+---
+
+## 11. API Client Files
+
+Shared client:
+
+- `client/src/api/axiosInstance.js` sets `baseURL: '/api'`.
+- Vite proxies `/api` to the backend container in development.
+
+Line-item API files:
+
+- `subscriptionApi.js`
+- `merchandiseInvoiceApi.js`
+- `expenseVoucherApi.js`
+- `trainingBookingApi.js`
+- `paymentReceiptApi.js`
+- `equipmentPurchaseApi.js`
+
+Simple form API file:
+
+- `simpleFormsApi.js`
+
+Note: Some API files return `res.data` directly, while others return the Axios
+promise. Check the file before consuming it in a page. Existing pages already
+handle their module's chosen style.
+
+---
+
+## 12. Shared Frontend Components
+
+Navigation and layout:
+
+- `Sidebar.jsx` groups links into `Lineitem Form` and `Simple Form Group`.
+
+Search modals:
+
+- `MemberSearchModal.jsx` loads active members from `/api/merchandise/members/active`.
+- `ProductSearchModal.jsx` receives product data as props.
+- `PackageSearchModal.jsx` receives package data as props.
+- `TrainerSearchModal.jsx` is used by training booking flows.
+- `StaffSearchModal.jsx` is used by staff lookup flows.
+
+Toast system:
+
+- `contexts/ToastContext.jsx` stores toast state and exposes `showToast`.
+- `hooks/useToast.js` reads the toast context.
+- `components/Toast.jsx` displays success, error, and info messages.
+
+Utility:
+
+- `utils/sortUtils.js` contains `compareSortValues`, which handles strings,
+  numbers, and date-like values for table sorting.
+
+---
+
+## 13. Styling Guide
+
+Use `client/src/index.css` classes instead of creating one-off inline styles.
+The app uses a white/green/gray design language with the `DM Sans` and `Syne`
+fonts.
+
+Common layout classes:
+
+- `app-layout`
+- `sidebar`
+- `main-content`
+- `page-header`
+- `page-title`
+- `page-subtitle`
+- `card`
+- `card-body`
+
+Common form classes:
+
+- `form-label`
+- `form-input`
+- `form-input readonly`
+- `form-input autofill`
+- `form-input computed`
+- `form-input error`
+- `form-error`
+- `form-grid-2`
+- `form-section-title`
+- `divider`
+
+Common table and list classes:
+
+- `table-wrapper`
+- `line-table`
+- `filter-bar`
+- `pagination`
+- `pagination-pages`
+- `page-btn`
+- `page-btn active`
+- `state-box`
+- `action-btn edit`
+- `action-btn delete`
+
+Common document/view classes:
+
+- `view-header-bar`
+- `view-actions`
+- `invoice-paper`
+- `invoice-top`
+- `invoice-brand`
+- `invoice-id`
+- `invoice-parties`
+- `invoice-table`
+- `invoice-total-row`
+- `invoice-total-box`
+- `invoice-footer`
+
+Common modal classes:
+
+- `modal-overlay`
+- `modal`
+- `modal-header`
+- `modal-title`
+- `modal-close`
+- `modal-search`
+- `modal-body`
+- `modal-row`
+- `modal-row-id`
+- `modal-empty`
+
+Print styles already hide the sidebar and view header bar.
+
+---
+
+## 14. How To Add A New Module
+
+Use the closest existing module as your template.
+
+For a line-item module:
+
+1. Create a service in `server/services`.
+2. Create a controller in `server/controllers`.
+3. Create a route file in `server/routes`.
+4. Register the route in `server/routes/index.js`.
+5. Create an API file in `client/src/api`.
+6. Create list, form, and view pages in `client/src/pages`.
+7. Add imports and routes in `client/src/App.jsx`.
+8. Add the link to `client/src/components/Sidebar.jsx`.
+9. Add or reuse lookup modals if needed.
+
+For a simple form module:
+
+1. Copy the closest simple service/controller/route.
+2. Match table columns and validation rules.
+3. Add API functions to `simpleFormsApi.js` or a new API file.
+4. Copy a simple `List`, `Form`, and `View` page.
+5. Register frontend routes and sidebar navigation.
+
+When registering routes, place fixed lookup routes before `/:id` routes so
+`/:id` does not catch paths like `/categories` or `/new`.
+
+---
+
+## 15. Development Rules
+
+Backend:
+
+- Keep SQL and calculations in services.
+- Keep request validation and response formatting in controllers.
+- Use transactions for multi-row writes.
+- Always release transaction clients in `finally`.
+- Use parameterized SQL queries.
+- Return `404` when a requested record does not exist.
+- Return `400` for missing required request fields.
+- Return `422` for business-rule failures like insufficient stock when useful.
+
+Frontend:
+
+- Keep pages consistent with existing list/form/view patterns.
+- Navigate to the view page after successful create or update.
+- Use `useParams()` to detect edit mode.
+- Use shared API helper functions.
+- Use the shared CSS classes from `index.css`.
+- Use `showToast` for user-facing success and error feedback where the existing
+  page pattern does.
+
+Data handling:
+
+- PostgreSQL `DECIMAL` values often arrive as strings. Convert with `Number()` or
+  `parseFloat()` before calculations.
+- Date fields are stored as SQL `DATE`; pages usually display them with
+  `toLocaleDateString`.
+- Time fields may arrive as `HH:mm:ss`; UI often displays `String(value).slice(0, 5)`.
+
+---
+
+## 16. Common Troubleshooting
+
+Database changes not showing:
+
+```bash
+docker-compose down -v
+docker-compose up --build
+```
+
+Backend cannot connect to database:
+
+- Check that the backend is using `DB_HOST=db` inside Docker.
+- Check that the `db` service is healthy/running.
+- Recreate the database volume if schema or seed scripts changed.
+
+Frontend API calls fail:
+
+- Check that requests use `/api`.
+- Check `client/vite.config.js`; `/api` should proxy to `http://backend:5000`.
+- Check that backend routes are mounted in `server/routes/index.js`.
+
+Duplicate key after manual CSV or Adminer inserts:
+
 ```sql
 SELECT setval(
   pg_get_serial_sequence('your_table', 'id'),
-  (SELECT MAX(id) FROM your_table)
+  COALESCE((SELECT MAX(id) FROM your_table), 1)
 );
 ```
 
+Tables with manual integer IDs, such as some line-item tables, may not use a
+PostgreSQL sequence. Their services calculate the next ID using `MAX(id)`.
+
+Stock numbers look wrong:
+
+- Merchandise invoice create deducts product stock.
+- Merchandise invoice update restores old stock first, then deducts new stock.
+- Merchandise invoice delete restores stock.
+- If data was edited manually in the database, product stock may need manual
+  correction.
+
 ---
 
-## 16. Module-Specific Notes
+## 17. Quick Mental Model
 
-### Training Bookings
-- Header: `training_booking` — member 🔍, trainer 🔍 (new TrainerSearchModal needed)
-- Lines: `training_session` — training type LOV, start/end time, duration auto-calc in minutes
-- `duration_minutes = (end_time - start_time) in minutes`
-- `session_cost = (duration_minutes / 60) * hourly_rate`
-- Total field: `total_session_cost`
+Think of GymBro as three layers:
 
-### Payment Receipts
-- Header: `payment_receipt` — member 🔍, payment method dropdown (from `payment_method` table)
-- Lines: `receipt_line_item` — reference_type enum (`SUBSCRIPTION`,`TRAINING`,`CLASS`,`MERCHANDISE`), reference_no text, amount_paid, remaining_balance, notes
-- No computed price — user enters amount directly
-- Total field: `total_paid`
+1. Database tables define the domain: members, staff, products, classes,
+   equipment, payments, expenses, subscriptions, bookings, and purchases.
+2. Backend services enforce the business rules: generated document IDs,
+   transaction safety, totals, stock movement, and lookup data.
+3. Frontend pages expose a consistent workflow: list records, create/edit forms,
+   read-only views, search modals, pagination, sorting, and printable documents.
 
-### Expense Vouchers
-- Header: `expense_voucher` — vendor_name text, staff dropdown 🔍 (new StaffSearchModal needed), payment method dropdown
-- Lines: `expense_line_item` — expense_category dropdown (from `expense_category` table), amount, description
-- Total field: `total_expense`
-
-### Equipment Purchase
-- Header: `equipment_purchase` — supplier_name text, staff dropdown 🔍, payment method dropdown
-- Lines: `equipment_purchase_item` — equipment_name text, category dropdown (from `equipment_category` table), quantity, unit_cost, warranty_months, extended_cost
-- `extended_cost = quantity * unit_cost` (no discount)
-- Total field: `total_purchase_cost`
+When changing the project, start from the database shape, follow the matching
+service pattern, then wire the frontend route/API/page in the same style as the
+nearest existing module.

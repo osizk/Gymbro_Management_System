@@ -1,6 +1,63 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
+const REPORT_MODULES = [
+  {
+    id: '7-1-nattakit',
+    label: '7.1 Nattakit',
+    reports: [
+      { to: '/reports/membership-subscriptions-list', label: 'Report 1' },
+      { to: '/reports/membership-subscription-print', label: 'Report 2' },
+      { to: '/reports/revenue-by-package', label: 'Report 3' },
+    ],
+  },
+  {
+    id: '7-2-phittayanan',
+    label: '7.2 Phittayanan',
+    reports: [
+      { to: '/reports/training-bookings-list', label: 'Report 1' },
+      { to: '/reports/training-booking-print', label: 'Report 2' },
+      { to: '/reports/revenue-by-trainer', label: 'Report 3' },
+    ],
+  },
+  {
+    id: '7-3-ashira',
+    label: '7.3 Ashira',
+    reports: [
+      { to: '/reports/merchandise-invoices-list', label: 'Report 1' },
+      { to: '/reports/merchandise-invoice-print', label: 'Report 2' },
+      { to: '/reports/revenue-by-product', label: 'Report 3' },
+    ],
+  },
+  {
+    id: '7-4-chanaphath',
+    label: '7.4 Chanaphath',
+    reports: [
+      { to: '/reports/payment-receipts-list', label: 'Report 1' },
+      { to: '/reports/payment-receipt-detail', label: 'Report 2' },
+      { to: '/reports/payments-by-method', label: 'Report 3' },
+    ],
+  },
+  {
+    id: '7-5-phuttipong',
+    label: '7.5 Phuttipong',
+    reports: [
+      { to: '/reports/expense-vouchers-list', label: 'Report 1' },
+      { to: '/reports/expense-voucher-print', label: 'Report 2' },
+      { to: '/reports/expense-by-category', label: 'Report 3' },
+    ],
+  },
+  {
+    id: '7-6-bannasorn',
+    label: '7.6 Bannasorn',
+    reports: [
+      { to: '/reports/active-subscriptions-as-of', label: 'Report 1' },
+      { to: '/reports/subscriptions-expiring-30-days', label: 'Report 2' },
+      { to: '/reports/monthly-business-performance', label: 'Report 3' },
+    ],
+  },
+];
+
 const NAV = [
   {
     id: 'lineitem_form',
@@ -18,52 +75,86 @@ const NAV = [
     id: 'simple_forms',
     section: 'Simple Form Group',
     links: [
-      // People
       { to: '/members',  label: 'Members' },
       { to: '/trainers', label: 'Trainers' },
       { to: '/staff',    label: 'Staff' },
-      // Programs
       { to: '/packages',        label: 'Packages' },
       { to: '/training-types',  label: 'Training Types' },
       { to: '/classes',         label: 'Classes' },
       { to: '/class-bookings',  label: 'Class Bookings' },
-      // Inventory
       { to: '/products', label: 'Products' },
-      // Facilities
       { to: '/equipment-items',      label: 'Equipment' },
       { to: '/maintenance-tickets',  label: 'Maintenance Tickets' },
-      // Settings
       { to: '/expense-categories',    label: 'Expense Categories' },
       { to: '/payment-methods',       label: 'Payment Methods' },
       { to: '/equipment-categories',  label: 'Equipment Categories' },
       { to: '/product-categories',    label: 'Product Categories' },
     ],
   },
+  {
+    id: 'report_form_group',
+    section: 'Report Form Group',
+    modules: REPORT_MODULES,
+  },
 ];
+
+const moduleButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: 'calc(100% - 24px)',
+  margin: '2px 12px',
+  padding: '8px 10px',
+  background: 'var(--gray-50)',
+  border: '1px solid var(--gray-100)',
+  borderRadius: 6,
+  cursor: 'pointer',
+  color: 'var(--gray-500)',
+  fontSize: 13,
+  fontWeight: 600,
+};
 
 export default function Sidebar() {
   const location = useLocation();
 
-  const isGroupActive = (links) =>
-    links.some((link) => {
+  const flattenLinks = (group) => {
+    if (group.links) return group.links;
+    return group.modules.flatMap((module) => module.reports);
+  };
+
+  const isGroupActive = (group) =>
+    flattenLinks(group).some((link) => {
       const pathname = location.pathname;
       return pathname === link.to || pathname.startsWith(link.to + '/');
     });
 
+  const isModuleActive = (module) =>
+    module.reports.some((link) => location.pathname === link.to || location.pathname.startsWith(link.to + '/'));
+
   const [openSections, setOpenSections] = useState(() => {
     const init = {};
-    NAV.forEach((g) => { init[g.id] = g.id === 'lineitem_form' || isGroupActive(g.links); });
+    NAV.forEach((g) => { init[g.id] = g.id === 'lineitem_form' || isGroupActive(g); });
+    return init;
+  });
+
+  const [openModules, setOpenModules] = useState(() => {
+    const init = {};
+    REPORT_MODULES.forEach((module, index) => { init[module.id] = index === 0 || isModuleActive(module); });
     return init;
   });
 
   const toggleSection = (id) => {
-    if (isGroupActive(NAV.find((g) => g.id === id).links)) return;
+    const group = NAV.find((g) => g.id === id);
+    if (isGroupActive(group)) return;
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleModule = (id) => {
+    setOpenModules((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-row">
           <img src="/logo.png" alt="GymBro logo" className="sidebar-logo-img" />
@@ -74,14 +165,13 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Nav groups */}
       {NAV.map((group) => {
-        const groupActive = isGroupActive(group.links);
+        const groupActive = isGroupActive(group);
         const isOpen = openSections[group.id] || groupActive;
+        const itemCount = group.links ? group.links.length : group.modules.length;
 
         return (
           <div key={group.id} style={{ marginBottom: 2 }}>
-            {/* Section header */}
             <button
               onClick={() => toggleSection(group.id)}
               style={{
@@ -118,7 +208,7 @@ export default function Sidebar() {
                   padding: '1px 7px',
                   lineHeight: '18px',
                 }}>
-                  {group.links.length}
+                  {itemCount}
                 </span>
                 <span style={{
                   fontSize: 9,
@@ -132,8 +222,7 @@ export default function Sidebar() {
               </span>
             </button>
 
-            {/* Links */}
-            {isOpen && (
+            {isOpen && group.links && (
               <div style={{ marginBottom: 4 }}>
                 {group.links.map((link) => (
                   <NavLink
@@ -144,6 +233,42 @@ export default function Sidebar() {
                     {link.label}
                   </NavLink>
                 ))}
+              </div>
+            )}
+
+            {isOpen && group.modules && (
+              <div style={{ marginBottom: 4 }}>
+                {group.modules.map((module) => {
+                  const moduleActive = isModuleActive(module);
+                  const moduleOpen = openModules[module.id] || moduleActive;
+                  return (
+                    <div key={module.id}>
+                      <button
+                        type="button"
+                        onClick={() => toggleModule(module.id)}
+                        style={{
+                          ...moduleButtonStyle,
+                          color: moduleActive ? 'var(--green-600)' : 'var(--gray-500)',
+                          background: moduleActive ? 'var(--green-50)' : 'var(--gray-50)',
+                          borderColor: moduleActive ? 'var(--green-200)' : 'var(--gray-100)',
+                        }}
+                      >
+                        <span>{module.label}</span>
+                        <span style={{ fontSize: 9, transform: moduleOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}>▼</span>
+                      </button>
+                      {moduleOpen && module.reports.map((link) => (
+                        <NavLink
+                          key={link.to}
+                          to={link.to}
+                          className={({ isActive }) => 'sidebar-link' + (isActive ? ' active' : '')}
+                          style={{ paddingLeft: 34, fontSize: 12.5 }}
+                        >
+                          {link.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

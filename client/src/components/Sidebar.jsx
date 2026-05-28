@@ -73,7 +73,7 @@ const NAV = [
   },
   {
     id: 'simple_forms',
-    section: 'Simple Form Group',
+    section: 'Simple Form',
     links: [
       { to: '/members',  label: 'Members' },
       { to: '/trainers', label: 'Trainers' },
@@ -93,7 +93,7 @@ const NAV = [
   },
   {
     id: 'report_form_group',
-    section: 'Report Form Group',
+    section: 'Report Form',
     modules: REPORT_MODULES,
   },
 ];

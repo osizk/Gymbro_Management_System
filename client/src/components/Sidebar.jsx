@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 const REPORT_MODULES = [
   {
     id: '7-1-nattakit',
-    label: '7.1 Nattakit',
+    label: 'Nattakit',
     reports: [
       { to: '/reports/membership-subscriptions-list', label: 'Report 1' },
       { to: '/reports/membership-subscription-print', label: 'Report 2' },
@@ -13,7 +13,7 @@ const REPORT_MODULES = [
   },
   {
     id: '7-2-phittayanan',
-    label: '7.2 Phittayanan',
+    label: 'Phittayanan',
     reports: [
       { to: '/reports/training-bookings-list', label: 'Report 1' },
       { to: '/reports/training-booking-print', label: 'Report 2' },
@@ -22,7 +22,7 @@ const REPORT_MODULES = [
   },
   {
     id: '7-3-ashira',
-    label: '7.3 Ashira',
+    label: 'Ashira',
     reports: [
       { to: '/reports/merchandise-invoices-list', label: 'Report 1' },
       { to: '/reports/merchandise-invoice-print', label: 'Report 2' },
@@ -31,7 +31,7 @@ const REPORT_MODULES = [
   },
   {
     id: '7-4-chanaphath',
-    label: '7.4 Chanaphath',
+    label: 'Chanaphath',
     reports: [
       { to: '/reports/payment-receipts-list', label: 'Report 1' },
       { to: '/reports/payment-receipt-detail', label: 'Report 2' },
@@ -40,7 +40,7 @@ const REPORT_MODULES = [
   },
   {
     id: '7-5-phuttipong',
-    label: '7.5 Phuttipong',
+    label: 'Phuttipong',
     reports: [
       { to: '/reports/expense-vouchers-list', label: 'Report 1' },
       { to: '/reports/expense-voucher-print', label: 'Report 2' },
@@ -49,7 +49,7 @@ const REPORT_MODULES = [
   },
   {
     id: '7-6-bannasorn',
-    label: '7.6 Bannasorn',
+    label: 'Bannasorn',
     reports: [
       { to: '/reports/active-subscriptions-as-of', label: 'Report 1' },
       { to: '/reports/subscriptions-expiring-30-days', label: 'Report 2' },

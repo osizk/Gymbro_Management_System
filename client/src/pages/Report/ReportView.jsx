@@ -17,6 +17,11 @@ function formatCell(value, column) {
   return value ?? '-';
 }
 
+function formatSummaryValue(summary) {
+  if (summary.type === 'money') return fmtMoney(summary.value);
+  return Number(summary.value || 0).toLocaleString('th-TH');
+}
+
 function initialFilterValues(report) {
   const values = {};
   for (const filter of report.filters || []) values[filter.name] = filter.defaultValue || '';
@@ -89,7 +94,7 @@ export default function ReportView() {
     <div>
       <div className="view-header-bar">
         <div>
-          <h1 className="page-title">{report.section} {report.title}</h1>
+          <h1 className="page-title">{report.title}</h1>
           <p className="page-subtitle">
             {report.groupName} • Member ID: {report.memberId} • {report.analysis ? 'Analysis report' : 'Normal report'}
           </p>
@@ -147,7 +152,12 @@ export default function ReportView() {
               <h2 className="form-section-title" style={{ marginBottom: 4 }}>Report Output</h2>
               <p className="page-subtitle">{filteredRows.length} row{filteredRows.length !== 1 ? 's' : ''} found</p>
             </div>
-            {report.summary?.totalAmount !== undefined && (
+            {report.summary?.value !== undefined ? (
+              <div className="total-inner" style={{ minWidth: 220 }}>
+                <span className="total-label">{report.summary.label || 'Total'}</span>
+                <span className="total-value">{formatSummaryValue(report.summary)}</span>
+              </div>
+            ) : report.summary?.totalAmount !== undefined && (
               <div className="total-inner" style={{ minWidth: 220 }}>
                 <span className="total-label">Total</span>
                 <span className="total-value">{fmtMoney(report.summary.totalAmount)}</span>

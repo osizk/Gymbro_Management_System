@@ -3,7 +3,7 @@ const pool = require('../db');
 const reportGroups = [
   {
     id: '7-1-nattakit',
-    groupName: '7.1 Nattakit',
+    groupName: 'Nattakit',
     memberId: '67070503413',
     reports: [
       {
@@ -40,7 +40,7 @@ const reportGroups = [
   },
   {
     id: '7-2-phittayanan',
-    groupName: '7.2 Phittayanan',
+    groupName: 'Phittayanan',
     memberId: '67070503428',
     reports: [
       {
@@ -77,7 +77,7 @@ const reportGroups = [
   },
   {
     id: '7-3-ashira',
-    groupName: '7.3 Ashira',
+    groupName: 'Ashira',
     memberId: '67070503445',
     reports: [
       {
@@ -114,7 +114,7 @@ const reportGroups = [
   },
   {
     id: '7-4-chanaphath',
-    groupName: '7.4 Chanaphath',
+    groupName: 'Chanaphath',
     memberId: '67070503462',
     reports: [
       {
@@ -151,7 +151,7 @@ const reportGroups = [
   },
   {
     id: '7-5-phuttipong',
-    groupName: '7.5 Phuttipong',
+    groupName: 'Phuttipong',
     memberId: '67070503430',
     reports: [
       {
@@ -188,7 +188,7 @@ const reportGroups = [
   },
   {
     id: '7-6-bannasorn',
-    groupName: '7.6 Bannasorn',
+    groupName: 'Bannasorn',
     memberId: '67070503420',
     reports: [
       {
@@ -525,7 +525,12 @@ async function getMerchandiseInvoicePrint(f) {
     ],
     rows: result.rows,
     detail: result.rows[0] || null,
-    summary: { recordCount: result.rows.length, totalAmount: moneySummary(result.rows, 'extended_price') },
+    summary: {
+      recordCount: result.rows.length,
+      label: 'Active Subscriptions',
+      value: result.rows.length,
+      type: 'number',
+    },
   };
 }
 
@@ -750,7 +755,12 @@ async function getActiveSubscriptionsAsOf(f) {
       { key: 'extended_price', label: 'Amount', type: 'money', align: 'right' },
     ],
     rows: result.rows,
-    summary: { recordCount: result.rows.length, totalAmount: moneySummary(result.rows, 'extended_price') },
+    summary: {
+      recordCount: result.rows.length,
+      label: 'Active Subscriptions',
+      value: result.rows.length,
+      type: 'number',
+    },
   };
 }
 

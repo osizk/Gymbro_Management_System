@@ -6,8 +6,9 @@ import { getAllMembers, deleteMember } from '../../api/simpleFormsApi';
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 const STATUS_COLORS = {
-  ACTIVE:   { bg: 'var(--green-100)', color: 'var(--green-600)' },
-  INACTIVE: { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
+  ACTIVE:    { bg: 'var(--green-100)', color: 'var(--green-600)' },
+  EXPIRED:   { bg: 'var(--red-100)',   color: 'var(--red-600)' },
+  CANCELLED: { bg: 'var(--gray-100)',  color: 'var(--gray-500)' },
 };
 
 export default function MemberList() {
@@ -101,7 +102,8 @@ export default function MemberList() {
             <select className="form-input" style={{ width: 'auto' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="">All Status</option>
               <option value="ACTIVE">Active</option>
-              <option value="INACTIVE">Inactive</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="CANCELLED">Cancelled</option>
             </select>
             {(search || statusFilter) && (
               <button className="btn btn-secondary" onClick={() => { setSearch(''); setStatusFilter(''); }}>Clear</button>
@@ -137,7 +139,7 @@ export default function MemberList() {
                   {paginated.length === 0
                     ? <tr><td colSpan={8}><div className="state-box">No members found.</div></td></tr>
                     : paginated.map((r) => {
-                        const sc = STATUS_COLORS[r.status] || STATUS_COLORS.INACTIVE;
+                        const sc = STATUS_COLORS[r.status] || STATUS_COLORS.CANCELLED;
                         return (
                           <tr key={r.id}>
                             <td>

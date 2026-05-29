@@ -74,7 +74,8 @@ export default function MemberForm() {
       } else {
         const res = await createMember(payload);
         showToast('Member created successfully', 'success');
-        setTimeout(() => navigate(`/members/${res.data.id}`), 1500);
+        const newId = res.data?.data?.id;
+        setTimeout(() => navigate(newId ? `/members/${newId}` : '/members'), 1500);
       }
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to save member', 'error');

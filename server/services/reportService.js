@@ -103,7 +103,7 @@ const reportGroups = [
       {
         id: 'revenue-by-product',
         section: '7.3.3',
-        title: 'Revenue by Product',
+        title: 'Gross Profit by Product',
         analysis: true,
         filters: [
           { name: 'from_date', label: 'From Date', type: 'date', defaultValue: '2026-01-01' },
@@ -556,7 +556,7 @@ async function getRevenueByProduct(f) {
       { key: 'gross_profit', label: 'Gross Profit', type: 'money', align: 'right' },
     ],
     rows: result.rows,
-    summary: { recordCount: result.rows.length, totalAmount: moneySummary(result.rows, 'total_revenue') },
+    summary: { label: 'Gross Profit', recordCount: result.rows.length, totalAmount: moneySummary(result.rows, 'gross_profit') },
   };
 }
 

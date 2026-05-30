@@ -159,7 +159,7 @@ export default function ReportView() {
               </div>
             ) : report.summary?.totalAmount !== undefined && (
               <div className="total-inner" style={{ minWidth: 220 }}>
-                <span className="total-label">Total</span>
+                <span className="total-label">{report.summary.label || 'Total'}</span>
                 <span className="total-value">{fmtMoney(report.summary.totalAmount)}</span>
               </div>
             )}

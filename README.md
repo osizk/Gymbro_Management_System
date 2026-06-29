@@ -111,3 +111,19 @@ SELECT setval(pg_get_serial_sequence('product_category', 'id'),
 
 SELECT setval(pg_get_serial_sequence('product', 'id'),
               COALESCE((SELECT MAX(id) FROM product), 1));
+
+------------------------------------------------------------------------
+
+## Contributors
+
+This project was developed as a team project for the Database course.
+
+| Name                        | Student ID  |
+| --------------------------- | ----------- |
+| Nattakit Prasertsak         | 67070503413 |
+| Bannasorn Thongkorn         | 67070503420 |
+| Phittayanan Tiencharoen     | 67070503428 |
+| Phuttipong Phankitnirundorn | 67070503430 |
+| Ashira Sansoda              | 67070503445 |
+| Chanaphath Malilert         | 67070503462 |
+
